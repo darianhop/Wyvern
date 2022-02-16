@@ -1,1 +1,17 @@
-print("Hello World")
+
+# Empty functions currently, full build will be implemented later...
+
+async def on_member_join(self, member):
+
+
+async def on_member_leave(self, discord_member):
+
+try:
+
+except Exception as e:
+
+
+
+
+
+
