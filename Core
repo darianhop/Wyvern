@@ -1,17 +1,68 @@
+import discord
+import pickle
+from erplbot.club_members import get_members_from_spreadsheet, Name
+from erplbot.sheets import GoogleSheets, retrieve_credentials
+from erplbot.commands import bot_command
 
-# Empty functions currently, full build will be implemented later...
+class ERPLBot(discord.Client):
+    """
+    This class represents the core functionality of the ERPL Discord Bot
+    """
 
-async def on_member_join(self, member):
+    async def on_ready(self):
+        """
+        This function runs when the bot is connected to Discord
+        """
+      
+    async def on_member_join(self, member):
+        """
+        This function runs whenever a new member joins the server
+        """
+        
+    
 
 
 async def on_member_leave(self, discord_member):
-
-try:
-
-except Exception as e:
-
-
+    """
+    This function runs whenever a new member leaves the server
+    """
+  
 
 
+async def on_member_update(self, before, after):
+    """
+    This function runs whenever a new member updates their own profile, like changing their nickname
+    """
+   
+
+async def on_message(self, message):
+    """
+    This function runs whenever a message is sent
+    """
+   
+
+    # Handle DM chat messages
+    if message.channel.type == "private":
+        return
+
+    """
+    Bot Commands
+    """
+    if message.channel == message.guild.get_channel(BOT_COMMAND_CHANNEL):
+        """
+        Delete Project Command (Officers Only)
+        """
+       
+
+   
+
+async def update_members(self, guild):
+    """
+   
+
+
+def main():
+
+  
 
 
