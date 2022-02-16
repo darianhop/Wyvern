@@ -1,0 +1,14 @@
+# Work in progress...
+
+import os
+from googleapiclient.discovery import build
+
+api_key = os.environ.get("DC_API_Key")
+
+discord = build("discord", "v3", developerKey=api_key)
+
+request = discord.server().list(part="statistics", forUsername="ice-fly")
+
+response = request.execute()
+
+print(response)
