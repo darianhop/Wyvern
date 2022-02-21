@@ -14,31 +14,10 @@ class ERPLBot(discord.Client):
         This function runs when the bot is connected to Discord
         """
       
-    async def on_member_join(self, member):
+    async def on_message(self, message):
         """
-        This function runs whenever a new member joins the server
+        This function runs whenever a message is sent
         """
-        
-    
-
-
-async def on_member_leave(self, discord_member):
-    """
-    This function runs whenever a new member leaves the server
-    """
-  
-
-
-async def on_member_update(self, before, after):
-    """
-    This function runs whenever a new member updates their own profile, like changing their nickname
-    """
-   
-
-async def on_message(self, message):
-    """
-    This function runs whenever a message is sent
-    """
    
 
     # Handle DM chat messages
@@ -52,12 +31,6 @@ async def on_message(self, message):
         """
         Delete Project Command (Officers Only)
         """
-       
-
-   
-
-async def update_members(self, guild):
-    """
    
 
 
