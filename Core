@@ -19,22 +19,26 @@ class ERPLBot(discord.Client):
         This function runs whenever a message is sent
         """
    
-
-    # Handle DM chat messages
-    if message.channel.type == "private":
-        return
-
-    """
-    Bot Commands
-    """
-    if message.channel == message.guild.get_channel(BOT_COMMAND_CHANNEL):
+       """
+       Bot Commands
+       """
+       
+    async def on_create_project(self, message):
+        """
+        Create Project Command (Officers Only)
+        """
+    
+    async def on_delete_project(self, message):
         """
         Delete Project Command (Officers Only)
         """
+        
    
 
-
 def main():
+    """
+    Our "main" function
+    """
 
   
 
