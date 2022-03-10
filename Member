@@ -12,15 +12,15 @@ class Member(discord.Client)
         if member == self.user:
             return
         
-        print(f"{member.name} joined")
+        print(f"{member.display_name} joined")
         # Give em' the default role
         recruit_role = member.guild.get_role(RECRUIT_ROLE_ID)
         await member.add_roles(recruit_role, reason='Member join')
         # Create the DM by default
         await member.create_dm()
         async with member.typing():
-            # Here we will just call the update_members function
-            await self.update_members(member.guild)
+            # Check as soon as they've joined
+            await self.update_members(member)
             # Add a welcome message/embed here
             embed = discord.Embed(
                 title="*We hope you rocket to success with us!* :rocket: <:ERPL:809226558988484608>",
@@ -40,10 +40,14 @@ class Member(discord.Client)
         """
         This function runs whenever a new member updates their own profile, like changing their nickname
         """
-        # Ignore our own updates
-        if after == self.user:
-            return
-        
+        if before.display_name != after.display_name:
+            print(f"{before.name} updated to {after.display_name}")
+            # Ignore our own updates
+            if after == self.user:
+                return
+            # Here we will just call the update_members function
+            await self.update_members(after.member)
+            
 
     async def on_message(self, message):
         """
@@ -54,5 +58,7 @@ class Member(discord.Client)
             return
         
         
-    async def update_members(self, guild):
+    async def update_member(self, member):
+        """
+        Thhis function updates the member
         """
