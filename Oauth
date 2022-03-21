@@ -11,7 +11,7 @@ from googleapiclient.errors import HttpError
 authorize_uri_google = "https://accounts.google.com/o/oauth2/auth"
 token_uri_google = "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url", "https://www.googleapis.com/oauth2/v1/certs"
 
-authorize_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=941072154718531594&permissions=8&redirect_uri=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fauth&response_type=code&scope=bot"
+authorize_uri_discord = ""
 token_uri_discord = ""
 
 #callback url specified when the application was defined
@@ -26,16 +26,16 @@ test_api_url_discord = "<<the URL of the API you want to call, along with any pa
 client_id_google = 'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json'
 client_secret_google = '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' #google client secret?
 
-client_id_discord = '941072154718531594'
-client_secret_discord = 'nW0r6ff9d1HFja7MMaiPxTmZ0nMQho4b'
+client_id_discord = ''
+client_secret_discord = ''
 
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar.events.readonly']
 
 # The ID and range of a sample spreadsheet.
-Google_SPREADSHEET_ID = '1N171O0NQHHY7w0SCOhymyDdJly0w4ll9EfJmHxo6zOU'
-RANGE = 'Class Data!A2:E'
+Google_SPREADSHEET_ID = '1PCqFR8aTVn1DyODSSBTq63T4iHvmXqAHwkQUBp6bFOw'
+RANGE = 'MasterDiscordList!A1:D20'
 
 
 
@@ -78,6 +78,8 @@ try:
     print('First name, Last name, bool:')
     for row in values:
         # Print columns A and E, which correspond to indices 0 and 4.
-        print('%s, %s' % (row[0], row[4]))
+        print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
 except HttpError as err:
     print(err)
+
+
