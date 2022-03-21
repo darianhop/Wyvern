@@ -1,1 +1,67 @@
+<<<<<<< Updated upstream
 print("Hello World")
+=======
+import discord
+import pickle
+from erplbot.club_members import get_members_from_spreadsheet, Name
+from erplbot.sheets import GoogleSheets, retrieve_credentials
+from erplbot.commands import bot_command
+
+class ERPLBot(discord.Client):
+    """
+    This class represents the core functionality of the ERPL Discord Bot
+    """
+
+    async def on_ready(self):
+        """
+        This function runs when the bot is connected to Discord
+        """
+      
+    async def on_message(self, message):
+        """
+        This function runs whenever a message is sent
+        """
+        # Ignore our own messages
+        if message.author == self.user:
+            return
+        
+        """
+        Bot Commands
+        """
+        # Make sure channel is specified
+        if message.channel == message.guild.get_channel(BOT_COMMAND_CHANNEL):
+            """
+            Create Project Command (Officers Only)
+            """
+            try:
+                if '/CreateProject' in message.content:
+                    on_create_project(self,message)
+            except Exception as e:
+                print(f"An exception occured while creating a new project:\n{e}")
+    
+    async def on_create_project(self, message):
+        """
+        Create Project Command (Officers Only)
+        """
+        # Check to make sure the person sending the message has officer role
+                    if OFFICER_ROLE_ID in list(map(lambda role: role.id, message.author.roles)):
+                            # Attempt to split and save the project name
+                            try:
+
+    
+    async def on_delete_project(self, message):
+        """
+        Delete Project Command (Officers Only)
+        """
+        
+   
+
+def main():
+    """
+    Our "main" function
+    """
+
+  
+
+
+>>>>>>> Stashed changes
