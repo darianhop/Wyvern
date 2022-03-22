@@ -12,7 +12,7 @@ authorize_uri_google = "https://accounts.google.com/o/oauth2/auth"
 token_uri_google = "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url", "https://www.googleapis.com/oauth2/v1/certs"
 
 authorize_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=941072154718531594&permissions=8&redirect_uri=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fauth&response_type=code&scope=bot"
-token_uri_discord = ""
+token_uri_discord = "https://discord.com/api/oauth2/token"
 
 #callback url specified when the application was defined
 callback_uri_google = "urn:ietf:wg:oauth:2.0:oob", "http://localhost"
