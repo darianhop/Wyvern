@@ -156,7 +156,19 @@ def main():
     """
     Our "main" function
     """
+    global creds
+    # Reads our Google API credentials before starting the bot
+    creds = retrieve_credentials()
+    # Sets up our intents as a Discord Bot
+    intents = discord.Intents.default()
+    intents.members = True
+    # allow mentions
+    allowed = discord.AllowedMentions.all()
+    # Connects to Discord and runs our bot with the bot's token
+    client = ERPLBot(intents=intents,allowed_mentions=allowed)
+    client.run(BOT_TOKEN)
 
+main()
   
 
 
