@@ -15,7 +15,7 @@ authorize_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=9410
 token_uri_discord = ""
 
 #callback url specified when the application was defined
-callback_uri_google = "urn:ietf:wg:oauth:2.0:oob", "http://localhost:64412/"
+callback_uri_google = "urn:ietf:wg:oauth:2.0:oob", "http://localhost"
 
 callback_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=941072154718531594&permissions=8&scope=bot"
 
