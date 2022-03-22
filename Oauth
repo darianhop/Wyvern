@@ -74,12 +74,14 @@ try:
         print('No data found.')
 
 
+    member_object = []
 
-    print('First name, Last name, bool:')
-    for row in values:
+    #print('Date, First name, Last name, bool:')
+    for row in values[1:]:
         # Print columns A and E, which correspond to indices 0 and 4.
-        print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-except HttpError as err:
-    print(err)
-
-
+        #print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
+        member_object.append({values[0][0]:row[0:][0],
+                              values[0][1]:row[1:][0],
+                              values[0][2]:row[2:][0],
+                              values[0][3]:row[3:][0]})
+        print(member_object)
