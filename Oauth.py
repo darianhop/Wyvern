@@ -34,7 +34,7 @@ client_secret_discord = ''
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar.events.readonly']
 
 # The ID and range of a sample spreadsheet.
-Google_SPREADSHEET_ID = '1PCqFR8aTVn1DyODSSBTq63T4iHvmXqAHwkQUBp6bFOw'
+Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
 RANGE = 'MasterDiscordList!A1:D20'
 
 
@@ -74,14 +74,19 @@ try:
         print('No data found.')
 
 
-    member_object = []
+        member_object = []
 
-    #print('Date, First name, Last name, bool:')
-    for row in values[1:]:
-        # Print columns A and E, which correspond to indices 0 and 4.
-        #print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-        member_object.append({values[0][0]:row[0:][0],
-                              values[0][1]:row[1:][0],
-                              values[0][2]:row[2:][0],
-                              values[0][3]:row[3:][0]})
-        print(member_object)
+        #print('Date, First name, Last name, bool:')
+        for row in values[1:]:
+            # Print columns A and E, which correspond to indices 0 and 4.
+            #print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
+            member_object.append({values[0][0]:row[0:][0],
+                                  values[0][1]:row[1:][0],
+                                  values[0][2]:row[2:][0],
+                                  values[0][3]:row[3:][0]})
+
+
+    print(member_object)
+
+except HttpError as err:
+    print(err)
