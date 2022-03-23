@@ -24,7 +24,7 @@ test_api_url_discord = "<<the URL of the API you want to call, along with any pa
 
 #client (application) credentials - discord & google
 client_id_google = 'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json'
-client_secret_google = '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' #google client secret?
+client_secret_google = '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' #google client secret
 
 client_id_discord = '941072154718531594'
 client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
