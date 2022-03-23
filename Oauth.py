@@ -11,8 +11,8 @@ from googleapiclient.errors import HttpError
 authorize_uri_google = "https://accounts.google.com/o/oauth2/auth"
 token_uri_google = "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url", "https://www.googleapis.com/oauth2/v1/certs"
 
-authorize_uri_discord = ""
-token_uri_discord = ""
+authorize_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=941072154718531594&permissions=8&redirect_uri=https%3A%2F%2Faccounts.google.com%2Fo%2Foauth2%2Fauth&response_type=code&scope=bot"
+token_uri_discord = "https://discord.com/api/oauth2/token"
 
 #callback url specified when the application was defined
 callback_uri_google = "urn:ietf:wg:oauth:2.0:oob", "http://localhost"
@@ -26,8 +26,8 @@ test_api_url_discord = "<<the URL of the API you want to call, along with any pa
 client_id_google = 'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json'
 client_secret_google = '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' #google client secret?
 
-client_id_discord = ''
-client_secret_discord = ''
+client_id_discord = '941072154718531594'
+client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
 
 
 # If modifying these scopes, delete the file token.json.
