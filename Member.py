@@ -2,7 +2,7 @@ import discord
 import pickle
 from erplbot.club_members import get_members_from_spreadsheet, Name
 
-class Member(discord.Client)
+class Member(discord.Client):
 
     async def on_member_join(self, member):
         """
