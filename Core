@@ -166,7 +166,7 @@ def main():
     allowed = discord.AllowedMentions.all()
     # Connects to Discord and runs our bot with the bot's token
     client = ERPLBot(intents=intents,allowed_mentions=allowed)
-    client.run(BOT_TOKEN)
+    client.run('Figure out how to read discord token file and grab the token')
 
 main()
   
