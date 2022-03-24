@@ -1,7 +1,12 @@
 import discord
 import pickle
-from erplbot.club_members import get_members_from_spreadsheet, Name
+# from erplbot.club_members import get_members_from_spreadsheet, Name
 
+RECRUIT_ROLE_ID = 946832526075367474
+MEMBER_ROLE_ID = 946832420798337054
+OFFICER_ROLE_ID = 956395930830114817
+PROJECT_ROLE_ID = 956395758200959026
+BOT_COMMAND_CHANNEL = 956400039566131270
 class Member(discord.Client):
 
     async def on_member_join(self, member):
@@ -15,7 +20,7 @@ class Member(discord.Client):
         print(f"{member.display_name} joined")
         # Give em' the default role
         recruit_role = member.guild.get_role(RECRUIT_ROLE_ID)
-        await member.add_roles(recruit_role, reason='Member join')
+        await member.add_roles(recruit_role, reason ='Member join')
         # Create the DM by default
         await member.create_dm()
         async with member.typing():

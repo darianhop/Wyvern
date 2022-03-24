@@ -2,6 +2,7 @@ import discord
 import pickle
 # from erplbot.club_members import get_members_from_spreadsheet, Name
 from Oauth import creds, discord_creds
+from Member import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -168,7 +169,7 @@ def main():
     client = ERPLBot(intents=intents,allowed_mentions=allowed)
     client.run(discord_creds)
 
-main()
-  
-
-
+try:
+    main()
+except:
+    print('Could not start main')
