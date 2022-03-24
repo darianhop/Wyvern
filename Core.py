@@ -1,8 +1,8 @@
 import discord
 import pickle
-from erplbot.club_members import get_members_from_spreadsheet, Name
-from erplbot.sheets import GoogleSheets, retrieve_credentials
-from erplbot.commands import bot_command
+# from erplbot.club_members import get_members_from_spreadsheet, Name
+from Oauth import creds, discord_creds
+# from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
     """
@@ -158,7 +158,7 @@ def main():
     """
     global creds
     # Reads our Google API credentials before starting the bot
-    creds = retrieve_credentials()
+    # creds = retrieve_credentials()
     # Sets up our intents as a Discord Bot
     intents = discord.Intents.default()
     intents.members = True
@@ -166,7 +166,7 @@ def main():
     allowed = discord.AllowedMentions.all()
     # Connects to Discord and runs our bot with the bot's token
     client = ERPLBot(intents=intents,allowed_mentions=allowed)
-    client.run('Figure out how to read discord token file and grab the token')
+    client.run(discord_creds)
 
 main()
   

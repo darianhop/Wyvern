@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import os.path
-
+import json
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -37,7 +37,12 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
 RANGE = 'MasterDiscordList!A1:D20'
 
-
+# Discord token
+if os.path.exists('DiscordToken.json'):
+    with open('DiscordToken.json') as f:
+        discord_creds = json.load(f)
+else:
+    print('Discord Token File not found')
 
 """
 Shows basic usage of the Sheets API.
@@ -84,9 +89,7 @@ try:
                                   values[0][1]:row[1:][0],
                                   values[0][2]:row[2:][0],
                                   values[0][3]:row[3:][0]})
-
-
-    print(member_object)
+            print(member_object)
 
 except HttpError as err:
     print(err)
