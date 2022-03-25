@@ -40,7 +40,7 @@ RANGE = 'MasterDiscordList!A1:D20'
 # Discord token
 if os.path.exists('DiscordToken.json'):
     with open('DiscordToken.json') as f:
-        discord_creds = json.load(f)
+        discord_token = json.load(f)
 else:
     print('Discord Token File not found')
 

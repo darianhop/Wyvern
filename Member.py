@@ -6,7 +6,8 @@ RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
 OFFICER_ROLE_ID = 956395930830114817
 PROJECT_ROLE_ID = 956395758200959026
-BOT_COMMAND_CHANNEL = 956400039566131270
+BOT_COMMAND_CHANNEL = 947286454277656587
+JOIN_CHANNEL = 956969343994978376
 class Member(discord.Client):
 
     async def on_member_join(self, member):
@@ -65,5 +66,5 @@ class Member(discord.Client):
         
     async def update_member(self, member):
         """
-        Thhis function updates the member
+        This function updates the member
         """
