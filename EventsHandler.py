@@ -24,8 +24,8 @@ class GoogleCalendar:
 
         # Creates a new Google API request service
         try:
-            creds=retrieve_credentials()
-            refreshToken= creds.refresh_token
+            creds = retrieve_credentials()
+            refreshToken = creds.refresh_token
 
             print('\t\tBuilding Service...\n')
             service = build('calendar', 'v3', refreshToken)

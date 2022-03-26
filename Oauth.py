@@ -54,7 +54,6 @@ Prints values from a sample spreadsheet.
 """
 def retrieve_credentials():
     creds = None
-    refresh_token =None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
