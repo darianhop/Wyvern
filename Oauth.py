@@ -85,6 +85,7 @@ try:
     if not values:
         print('No data found.')
 
+        global member_object
 
         member_object = []
 
