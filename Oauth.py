@@ -37,6 +37,10 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
 RANGE = 'MasterDiscordList!A1:D20'
 
+# The ID of a sample calendar
+Google_CALENDAR_ID = '19aahr89ga4qhhrj15vskbcfhk@group.calendar.google.com'
+
+
 # Discord token
 if os.path.exists('DiscordToken.json'):
     with open('DiscordToken.json') as f:
@@ -50,6 +54,7 @@ Prints values from a sample spreadsheet.
 """
 def retrieve_credentials():
     creds = None
+    refresh_token =None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
@@ -92,7 +97,7 @@ try:
                                   values[0][1]:row[1:][0],
                                   values[0][2]:row[2:][0],
                                   values[0][3]:row[3:][0]})
-            print(member_object)
+        print(member_object)
 
 except HttpError as err:
-    print(err)
+    print(err.content)

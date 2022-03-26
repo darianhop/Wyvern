@@ -3,6 +3,7 @@ import pickle
 # from erplbot.club_members import get_members_from_spreadsheet, Name
 from Oauth import discord_token, retrieve_credentials
 from MemberHandler import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL
+import EventsHandler
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -144,10 +145,10 @@ class ERPLBot(discord.Client):
             """
             try:
                 if '/CreateProject' in message.content:
-                    on_create_project(self,message)
+                    self.on_create_project(self,message)
 
                 if '/DeleteProject' in message.content:
-                    on_delete_project(self,message)
+                    self.on_delete_project(self,message)
                          
             except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
