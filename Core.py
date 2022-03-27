@@ -3,6 +3,7 @@ import pickle
 # from erplbot.club_members import get_members_from_spreadsheet, Name
 from Oauth import discord_token, retrieve_credentials
 from MemberHandler import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL
+from MemberHandler import Member_Handler
 import EventsHandler
 # from erplbot.commands import bot_command
 
@@ -169,7 +170,8 @@ def main():
     # Connects to Discord and runs our bot with the bot's token
     client = ERPLBot(intents=intents,allowed_mentions=allowed)
     client.run(discord_token)
-
+    client2 = Member_Handler(intents=intents)
+    client2.run(discord_token)
 try:
     main()
 except:

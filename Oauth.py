@@ -72,32 +72,6 @@ def retrieve_credentials():
             token.write(creds.to_json())
     return creds
 
-try:
-    creds = retrieve_credentials()
-    service = build('sheets', 'v4', credentials=creds)
 
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                range=RANGE).execute()
-    values = result.get('values', [])
 
-    if not values:
-        print('No data found.')
 
-        global member_object
-
-        member_object = []
-
-        #print('Date, First name, Last name, bool:')
-        for row in values[1:]:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            #print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-            member_object.append({values[0][0]:row[0:][0],
-                                  values[0][1]:row[1:][0],
-                                  values[0][2]:row[2:][0],
-                                  values[0][3]:row[3:][0]})
-        print(member_object)
-
-except HttpError as err:
-    print(err.content)
