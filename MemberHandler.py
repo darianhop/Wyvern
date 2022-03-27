@@ -1,6 +1,21 @@
 import discord
 import pickle
 # from erplbot.club_members import get_members_from_spreadsheet, Name
+from discord import client
+from discord.ext.commands import bot
+
+from Oauth import member_object, retrieve_credentials, Google_SPREADSHEET_ID, RANGE
+#from __future__ import print_function
+import os.path
+import json
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+import Core
+
+
 
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
@@ -8,7 +23,55 @@ OFFICER_ROLE_ID = 956395930830114817
 PROJECT_ROLE_ID = 956395758200959026
 BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
-class Member(discord.Client):
+guild_ID = 946831225081958410
+
+
+class Name:
+    """
+    Represents a person's name. First and Last
+    """
+
+    def __init__(self, first=None, last=None):
+        """
+        Creates a new Name instance with the optional values
+        """
+        self.first = first
+        self.last = last
+
+    @staticmethod
+    def from_str(s):
+        """
+        Creates a new Name object from the given string.
+        Will only populate the first name if that is the only one given
+        """
+        name = Name()
+
+        # Split the string by spaces
+        name_split = s.split(' ')
+
+        name.first = name_split[0]
+
+        # If their name has more than one word, like a name, store that too
+        if len(name_split) > 1:
+            name.last = name_split[1]
+
+        return name
+
+    def __eq__(self, other):
+        """
+        Overrides the == operator for this type
+        """
+        return self.first == other.first and self.last == other.last
+
+    def __repr__(self):
+        """
+        The internal function called by Python when trying to print this type
+        """
+        return f'{self.first} {self.last}'
+
+
+
+class Member_Handler(discord.Client):
 
     async def on_member_join(self, member):
         """
@@ -68,3 +131,64 @@ class Member(discord.Client):
         """
         This function updates the member
         """
+        return
+
+        discord_member_object = []
+
+    async def member_list_Sync(self, member):
+        """
+        This function Syncs the google sheets
+        and discord member lists
+        """
+
+        # Pull new google sheets member_object
+        try:
+            creds = retrieve_credentials()
+            service = build('sheets', 'v4', credentials=creds)
+
+            # Call the Sheets API
+            sheet = service.spreadsheets()
+            result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
+                                        range=RANGE).execute()
+            values = result.get('values', [])
+
+            if not values:
+                print('No data found.')
+            else:
+
+                member_object = []
+
+                # print('Date, First name, Last name, bool:')
+                for row in values[1:]:
+                    # Print columns A and E, which correspond to indices 0 and 4.
+                    # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
+                    member_object.append({values[0][0]: row[0:][0],
+                                          values[0][1]: row[1:][0],
+                                          values[0][2]: row[2:][0],
+                                          values[0][3]: row[3:][0]})
+                print(member_object)
+
+        except HttpError as err:
+            print(err.content)
+
+        guild = client.get_guild(guild_ID)
+        memberList = guild.members
+        print(memberList)
+
+        #intents = discord.Intents.default()
+        #intents.members = True
+        #client = discord.Client(intents=intents)
+
+        #for guild in bot.guilds:
+         #   for member in guild.members:
+          #      print(member)
+
+
+        #guild = client.get_guild(guild_ID)
+        #memberList = guild.members
+
+
+
+
+
+        return

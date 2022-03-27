@@ -31,7 +31,7 @@ client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
 
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar']#.events.readonly
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar.events.readonly']
 
 # The ID and range of a sample spreadsheet.
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
@@ -66,7 +66,7 @@ def retrieve_credentials():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json', SCOPES)
-            creds = flow.run_local_server()
+            creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
             token.write(creds.to_json())
