@@ -4,7 +4,7 @@ import pickle
 from discord import client
 from discord.ext.commands import bot
 
-from Oauth import member_object, retrieve_credentials, Google_SPREADSHEET_ID, RANGE
+from Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE
 #from __future__ import print_function
 import os.path
 import json
@@ -13,7 +13,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import Core
+#import Core
 
 
 
@@ -25,6 +25,11 @@ BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
 guild_ID = 946831225081958410
 
+
+
+guild = client.get_guild(guild_ID)
+memberList = guild.members
+print(memberList)
 
 class Name:
     """
@@ -122,6 +127,7 @@ class Member_Handler(discord.Client):
         """
         This function runs whenever a message is sent
         """
+
         # Ignore our own updates
         if message.author == self.user:
             return
@@ -171,17 +177,16 @@ class Member_Handler(discord.Client):
         except HttpError as err:
             print(err.content)
 
-        guild = client.get_guild(guild_ID)
-        memberList = guild.members
-        print(memberList)
+        #guild = client.get_guild(guild_ID)
+        #memberList = guild.members
+        #print(memberList)
 
         #intents = discord.Intents.default()
         #intents.members = True
         #client = discord.Client(intents=intents)
 
-        #for guild in bot.guilds:
-         #   for member in guild.members:
-          #      print(member)
+        #for  members in get_all_members()
+           # print(members)
 
 
         #guild = client.get_guild(guild_ID)
