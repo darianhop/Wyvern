@@ -158,8 +158,8 @@ def main():
     """
     Our "main" function
     """
-    # Reads our Google API credentials before starting the bot
-    creds = retrieve_credentials()
+    # # Reads our Google API credentials before starting the bot
+    # creds = retrieve_credentials()
     # Sets up our intents as a Discord Bot
     intents = discord.Intents.default()
     intents.members = True
