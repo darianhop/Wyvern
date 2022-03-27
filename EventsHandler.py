@@ -28,7 +28,7 @@ class GoogleCalendar:
             refreshToken = creds.refresh_token
 
             print('\t\tBuilding Service...\n')
-            service = build('calendar', 'v3', refreshToken)
+            service = build('calendar', 'v3', creds)
             calendar = service.calendars().get(calendarId=Google_CALENDAR_ID)
             
             print('\t\tService Build Completed\n')
