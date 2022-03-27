@@ -31,7 +31,7 @@ client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
 
 
 # If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar.events.readonly']
+SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar']
 
 # The ID and range of a sample spreadsheet.
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
