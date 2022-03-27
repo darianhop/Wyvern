@@ -28,25 +28,16 @@ class GoogleCalendar:
             #     print(e)
             """
 
-            """
-            bnow = datetime.now()
-            bhour = timedelta(hours = 1)
-            oneHour = (bnow+bhour).time()
-            print(oneHour,'oneHour without date')
-            oneHour = oneHour.isoformat()
-            print(oneHour,'oneHour with date')
-            # bnow = bnow.isoformat()
-            # print(bnow)
-            # oneHour = datetime.combine(((datetime.date(1,1,1),bnow)+bhour).time())
-            """
-             # Call the Calendar API
-            now = datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
-            """
-            print(now,'now')
-            """
-            # print('Getting the upcoming 10 events')
+            # Call the Calendar API
+            
+            # Listening for events in the next 3 hours
+            now = datetime.utcnow()
+            hour = timedelta(hours = 3)
+            deltaHour = (now+hour).isoformat() + 'Z' # Z is UTC format
+            now = now.isoformat() + 'Z' # Z is UTC format
+            
             events_result = service.events().list(calendarId=Google_CALENDAR_ID, timeMin=now,
-                                                # timeMax =
+                                                timeMax = deltaHour,
                                                 maxResults=10, singleEvents=True,
                                                 orderBy='startTime').execute()
             events = events_result.get('items', [])
@@ -56,12 +47,12 @@ class GoogleCalendar:
                 if not events:
                     print('No upcoming events found.')
                     return
-                """
+                
                 # Prints the start and name of the next 10 events
-                # for event in events:
-                #     start = event['start'].get('dateTime', event['start'].get('date'))
-                #     print(start, event['summary'])
-                """
+                for event in events:
+                    start = event['start'].get('dateTime', event['start'].get('date'))
+                    # print(start, event['summary']) #Commented out to not spam terminal
+                
             except HttpError as error:
                 print('An error occurred: %s' % error)
 
@@ -72,5 +63,5 @@ class GoogleCalendar:
     try:
         CalendarInstance()
     except HttpError as error:
-        print('GoogleCalendar Class: Exception Thrown, could not complete CalendarInstance\n')
+        print('GoogleCalendar Class: Exception Thrown, could not complete CalendarInstance Function\n')
         print(error)
