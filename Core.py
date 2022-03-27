@@ -158,7 +158,6 @@ def main():
     """
     Our "main" function
     """
-    global creds
     # Reads our Google API credentials before starting the bot
     creds = retrieve_credentials()
     # Sets up our intents as a Discord Bot
