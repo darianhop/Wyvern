@@ -176,8 +176,4 @@ class Member_Handler(discord.Client):
         memberList = guild.members
         print(memberList)
 
-
-
-
-
         return
