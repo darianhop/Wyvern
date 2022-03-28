@@ -19,9 +19,6 @@ callback_uri_google = "urn:ietf:wg:oauth:2.0:oob", "http://localhost"
 
 callback_uri_discord = "https://discord.com/api/oauth2/authorize?client_id=941072154718531594&permissions=8&scope=bot"
 
-test_api_url_google = "<<the URL of the API you want to call, along with any parameters, goes here>>"
-test_api_url_discord = "<<the URL of the API you want to call, along with any parameters, goes here>>"
-
 #client (application) credentials - discord & google
 client_id_google = 'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json'
 client_secret_google = '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' #google client secret
@@ -35,7 +32,7 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis
 
 # The ID and range of a sample spreadsheet.
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
-RANGE = 'MasterDiscordList!A1:D20'
+RANGE = 'MasterDiscordList!A1:D'
 
 # The ID of a sample calendar
 Google_CALENDAR_ID = '19aahr89ga4qhhrj15vskbcfhk@group.calendar.google.com'
@@ -64,8 +61,7 @@ def retrieve_credentials():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'client_secret_317800144070-om88ettpsiutn33kit32knjj9mtpunbg.apps.googleusercontent.com.json', SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file(client_id_google, SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.json', 'w') as token:
