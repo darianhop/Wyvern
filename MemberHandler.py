@@ -25,12 +25,6 @@ BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
 guild_ID = 946831225081958410
 
-
-
-guild = client.get_guild(guild_ID)
-memberList = guild.members
-print(memberList)
-
 class Name:
     """
     Represents a person's name. First and Last
@@ -141,7 +135,7 @@ class Member_Handler(discord.Client):
 
         discord_member_object = []
 
-    async def member_list_Sync(self, member):
+    async def member_list_Sync(self):
         """
         This function Syncs the google sheets
         and discord member lists
@@ -177,20 +171,10 @@ class Member_Handler(discord.Client):
         except HttpError as err:
             print(err.content)
 
-        #guild = client.get_guild(guild_ID)
-        #memberList = guild.members
-        #print(memberList)
-
-        #intents = discord.Intents.default()
-        #intents.members = True
-        #client = discord.Client(intents=intents)
-
-        #for  members in get_all_members()
-           # print(members)
-
-
-        #guild = client.get_guild(guild_ID)
-        #memberList = guild.members
+        #obtain guild members
+        guild = self.get_guild(guild_ID)
+        memberList = guild.members
+        print(memberList)
 
 
 
