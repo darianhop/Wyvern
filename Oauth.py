@@ -50,6 +50,9 @@ Shows basic usage of the Sheets API.
 Prints values from a sample spreadsheet.
 """
 def retrieve_credentials():
+    """
+    Retrieves the Google OAuth Credentials and refreshes tokens if they are expired
+    """
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
