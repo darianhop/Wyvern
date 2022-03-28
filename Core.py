@@ -17,6 +17,7 @@ class ERPLBot(discord.Client):
         """
         This function runs when the bot is connected to Discord
         """
+        await Member_Handler.member_list_Sync(self)
       
 
     async def on_create_project(self, message):
@@ -173,9 +174,6 @@ def main():
     client.run(discord_token)
     client2 = Member_Handler(intents=intents)
     client2.run(discord_token)
-
-
-
 
 
 try:
