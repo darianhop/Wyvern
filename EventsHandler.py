@@ -40,15 +40,15 @@ class GoogleCalendar:
 
                 # Setting up time ranges
                 now = datetime.utcnow()
-                deltaStartTime = timedelta(hours=0)
-                deltaEndTime = timedelta(hours=3,minutes=5)
-                startTime = (now+deltaStartTime).isoformat() + 'Z'
-                endTime = (now+deltaEndTime).isoformat() + 'Z'
-
-                 # Call the Calendar API
+                deltaStartTime = timedelta(hours=1)
+                deltaEndTime = timedelta(hours=1,minutes=5)
+                startTime = (now+deltaStartTime).isoformat() + 'Z' # Z is UTC format
+                endTime = (now+deltaEndTime).isoformat() + 'Z' # Z is UTC format
                 now = now.isoformat() + 'Z' # Z is UTC format
                 
-                events_result = service.events().list(calendarId=Google_CALENDAR_ID, timeMin=startTime,
+                # Call the Calendar API
+                events_result = service.events().list(calendarId=Google_CALENDAR_ID, 
+                                                    timeMin=startTime,
                                                     timeMax = endTime,
                                                     maxResults=10, singleEvents=True,
                                                     orderBy='startTime').execute()
