@@ -25,6 +25,11 @@ BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
 guild_ID = 946831225081958410
 
+def __str__(self):
+    return ""
+def iterateDictionary2(key_name, some_list):
+    for d in some_list:
+        print(d[key_name])
 class Name:
     """
     Represents a person's name. First and Last
@@ -133,14 +138,16 @@ class Member_Handler(discord.Client):
         """
         return
 
-        discord_member_object = []
+    def iterateDictionary2(key_name, some_list):
+        for d in some_list:
+            print(d[key_name])
 
     async def member_list_Sync(self):
         """
         This function Syncs the google sheets
         and discord member lists
         """
-
+        discord_member_object = []
         # Pull new google sheets member_object
         try:
             creds = retrieve_credentials()
@@ -166,6 +173,7 @@ class Member_Handler(discord.Client):
                                           values[0][1]: row[1:][0],
                                           values[0][2]: row[2:][0],
                                           values[0][3]: row[3:][0]})
+                    #print(row[1:][0],row[2:][0])
                 print(member_object)
 
         except HttpError as err:
@@ -175,5 +183,36 @@ class Member_Handler(discord.Client):
         guild = self.get_guild(guild_ID)
         memberList = guild.members
         print(memberList)
+
+        discord_member_object = [dict() for i in range(4)]
+        #print(discord_member_object)
+
+        #discord_member_object
+        # X = bool
+        #
+        # for row2 in memberList[1:]:
+        #  name = str(row2)
+        #  name = name[:-5]
+        #  name = name.split(" ", 1)
+        #  print(name[0])
+        #  # iterateDictionary2('First',member_object)
+        #  list_of_all_values = [value for x in member_object
+        #                        for value in x.values()]
+        #  if name[0] in list_of_all_values:
+        #    #print(row[1:][0])
+        #    print("First name: Match")
+        #    X=True
+        #    if name[1] in list_of_all_values:
+        #        print("Last name: Match")
+        #  else:
+        #    print("nope not the same")
+        #    X=False
+        #    print(X)
+        # print(row2)
+        # print(X)
+        # print("{} {}".format(row[1:][0], row[2:][0]))
+
+
+
 
         return

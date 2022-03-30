@@ -5,7 +5,7 @@ from Oauth import discord_token, retrieve_credentials
 from MemberHandler import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL, \
     guild_ID
 from MemberHandler import Member_Handler
-import EventsHandler
+#import EventsHandler
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
