@@ -5,7 +5,7 @@ from Oauth import discord_token, retrieve_credentials
 from MemberHandler import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL, \
     guild_ID
 from MemberHandler import Member_Handler
-#import EventsHandler
+from EventsHandler import GoogleCalendar
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -21,6 +21,9 @@ class ERPLBot(discord.Client):
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
         print("Bot initialized")
+        # GoogleCalendar.init()
+        GoogleCalendar.initEvents()
+      
       
 
     async def on_create_project(self, message):
