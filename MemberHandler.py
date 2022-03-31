@@ -1,8 +1,9 @@
 import discord
 import pickle
 # from erplbot.club_members import get_members_from_spreadsheet, Name
-from discord import client
+from discord import client, guild
 from discord.ext.commands import bot
+from discord.ext import tasks
 
 from Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE
 #from __future__ import print_function
@@ -13,7 +14,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-#import Core
+import asyncio
 
 
 
@@ -77,6 +78,21 @@ class Name:
 
 class Member_Handler(discord.Client):
 
+    def initMember():
+        Member_Handler.initializeMemberHandler.start()
+
+    def unload(self):
+        self.initializeMemberHandler.cancel()
+
+    @tasks.loop(seconds = 20)
+    async def initializeMemberHandler():
+        # await Member_Handler().on_member_join(None)
+        # loop = asyncio.new_event_loop()
+        # tasks = Member_Handler.on_member_join(Member_Handler, Member_Handler.user)
+        # (loop.run_until_complete(tasks))
+        # asyncio.to_thread
+        await Member_Handler.on_member_join(Member_Handler, discord.Member)
+
     async def on_member_join(self, member):
         """
         This function runs whenever a new member joins the server
@@ -84,10 +100,11 @@ class Member_Handler(discord.Client):
         # Ignore our own updates
         if member == self.user:
             return
-        
-        print(f"{member.display_name} joined")
+        # print(discord.Client.fetch_guilds(guild_ID).get_role(RECRUIT_ROLE_ID).name) 
+        print(f"{member.name} joined")
         # Give em' the default role
         recruit_role = member.guild.get_role(RECRUIT_ROLE_ID)
+        # recruit_role = RECRUIT_ROLE_ID # Remove after finished
         await member.add_roles(recruit_role, reason ='Member join')
         # Create the DM by default
         await member.create_dm()

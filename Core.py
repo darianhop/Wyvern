@@ -6,6 +6,7 @@ from MemberHandler import OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECR
     guild_ID
 from MemberHandler import Member_Handler
 from EventsHandler import GoogleCalendar
+import asyncio
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -21,8 +22,9 @@ class ERPLBot(discord.Client):
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
         print("Bot initialized")
-        # GoogleCalendar.init()
-        GoogleCalendar.initEvents()
+        # GoogleCalendar.init() # Comment in to turn on passive events listener
+        # GoogleCalendar.initEvents() # Not yet working
+        # Member_Handler.initMember() # Comment in to work with: on_member_join(self, member)
       
       
 
