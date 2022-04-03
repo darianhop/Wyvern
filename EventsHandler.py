@@ -2,14 +2,15 @@
 from calendar import Calendar, calendar
 from multiprocessing import Event
 from discord.ext import tasks, commands
-from cv2 import detail_MatchesInfo
+import discord
 import googlesearch
+from MemberHandler import Member_Handler
 from Oauth import SCOPES, Google_CALENDAR_ID, retrieve_credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import asyncio
-
+REMINDER_ID = 947286490973634640
 """
 To renable eventshandler, uncomment "GoogleCalendar.init()" around line 24 in core.
 """
@@ -50,9 +51,10 @@ class GoogleCalendar:
                 async def EventsListener():
                     """
                     Listening for events 1 hour to 1hr 5min from now, every 5 minutes
+                    Google Calendar searching works only with UTC Time Zone
                     """
 
-                    # Setting up time ranges
+                    # Setting up time ranges for the calendar search with respect to UTC time zone.
                     now = datetime.utcnow()
                     deltaStartTime = timedelta(hours=1)
                     deltaEndTime = timedelta(hours=1,minutes=5)
@@ -60,29 +62,77 @@ class GoogleCalendar:
                     endTime = (now+deltaEndTime).isoformat() + 'Z' # Z is UTC format
                     now = now.isoformat() + 'Z' # Z is UTC format
                     
-                    # Call the Calendar API
-                    events_result = service.events().list(calendarId=Google_CALENDAR_ID, 
+                    # Call the Calendar API (Searching Times need to be in UTC time, values for logic are defined later)
+                    events_result = service.events().list(calendarId='rcl.talks@gmail.com', 
                                                         timeMin=startTime,
                                                         timeMax = endTime,
                                                         maxResults=10, singleEvents=True,
                                                         orderBy='startTime').execute()
                     events = events_result.get('items', [])
                     
+                    
                     # Retrieving Events, if there are any
                     try:
                         if not events:
-                            print('No upcoming events found.')
-                            print(now,' Current Time')
+                            # print('\nNo upcoming events found.')
+                            # print(now,' Current Time\n')
                             return
-                        # Prints the start and name of up to the next 10 events
+                        # Gather data on all of the events returned from the calendar search
                         for event in events:
                             start = event['start'].get('dateTime', event['start'].get('date'))
-                            print(start, event['summary']) #Commented out to not spam terminal
+                            
+                            """
+                            These definitions below are:
+                                 The Current Time in this time zone
+                                 The Start of the Search Range in this time zone
+                                 The End of the Search Range in this time zone
+                            If the values used for the events results above are used it searches with respect to UTC time zone.
+                            """
+                            # Defining the Current Time and Search Range with respect to this time zone
+                            timeZoneNowMath = datetime.now()
+                            timeZoneStartMath = timedelta(hours=1)
+                            timeZoneEndMath = timedelta(hours=1,minutes=5)
+                            timeZoneStart = (timeZoneNowMath + timeZoneStartMath).isoformat()
+                            timeZoneEnd = (timeZoneNowMath + timeZoneEndMath).isoformat()
+                            
+                        # Determining if any of the events returned are starting within the search range in this time zone
+                        if start >= timeZoneStart and start <= timeZoneEnd:
+                            print(timeZoneNowMath, 'current time')
+                            print(start, event['summary'])
+                            embed = discord.Embed(
+                                title='*LB-130 Calenar',
+                                color=discord.Colour(0x255c6),
+                                description="Desc",
+                            )
+                            await discord.Guild.get_channel(Member_Handler,channel_id=REMINDER_ID).send(embed=embed)
+                            """
+                            await statement here
+                            """
+                        else:
+                            return
+                        
+                        # If any events have been created, fetch them and create notification. 
+                        # """
+                        # (Currently Returns exception HttpError 400)
+                        # """
+                        # new_events_result = service.events().watch(calendarId='rcl.talks@gmail.com', 
+                        #                                 timeMin=now,
+                        #                                 # timeMax = endTime,
+                        #                                 maxResults=10, singleEvents=True,
+                        #                                 orderBy='startTime').execute()
+                        # new_events = new_events_result.get('items', [])
+                        # for event in new_events:
+                        #     new_event_data = new_events['start'].get('dateTime', new_events['start'].get('date'))
+                        #     print(new_event_data, new_events['summary'])
+
 
                     except HttpError as error:
                         print('An error occurred: %s' % error)
                         
                 # async def createdEventsListener():
+                #     """
+                #     Returns the time and name of a newly created event in the calendar when it is created.                    
+                #     """
                 #     # Setting up time ranges
                 #     now = datetime.utcnow()
                 #     now = now.isoformat() + 'Z' # Z is UTC format
@@ -112,9 +162,10 @@ class GoogleCalendar:
                 # The API encountered a problem.
                 print(error)
         
-            # Waits 5 minutes and creates a task
+            # Waits 5 minutes and creates a taskS
             print('Events Call at timestamp')
-            await asyncio.sleep(10)
+            print(datetime.utcnow())
+            await asyncio.sleep(30)
             asyncio.create_task(EventsListener())
             # asyncio.create_task(createdEventsListener())
     

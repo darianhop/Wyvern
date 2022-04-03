@@ -7,6 +7,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from datetime import datetime, timezone
 
 authorize_uri_google = "https://accounts.google.com/o/oauth2/auth"
 token_uri_google = "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url", "https://www.googleapis.com/oauth2/v1/certs"
@@ -59,9 +60,17 @@ def retrieve_credentials():
     # time.
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        expiry = creds.expiry
+        now = datetime.utcnow()
+    
+        # d = datetime.now(tz=timezone.utc)
+        # print(expiry, 'expiry time')
+        # print(now, 'current time')
+        # print(d.tzinfo)
+    
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
+        if creds and creds.expired and creds.refresh_token and now < expiry:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(client_id_google, SCOPES)

@@ -5,8 +5,9 @@ from Oauth import discord_token, retrieve_credentials
 from MemberHandler import JOIN_CHANNEL, OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL, JOIN_CHANNEL, \
     guild_ID
 from MemberHandler import Member_Handler
-from EventsHandler import GoogleCalendar
+from EventsHandler import GoogleCalendar, REMINDER_ID
 import asyncio
+from discord.ext import commands
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -16,15 +17,14 @@ class ERPLBot(discord.Client):
 
     async def on_ready(self):
         """
-        This function runs when the bot is connected to Discord
+        This function runs when the bot is co5nnected to Discord
         """
         await Member_Handler.member_list_Sync(self)
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
         print("Bot initialized")
-        # GoogleCalendar.init() # Comment in to turn on passive events listener
-        # GoogleCalendar.initEvents() # Not yet working
-        # Member_Handler.initMember() # Comment in to work with: on_member_join(self, member)
+        GoogleCalendar.init() # Comment in to turn on passive events listener
+        # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)
       
     async def on_member_join(self, member):
         """
@@ -36,27 +36,37 @@ class ERPLBot(discord.Client):
 
         print(f"{member.name} joined")
         # Give em' the default role
-        recruit_role = discord.Member.guild.get_role(RECRUIT_ROLE_ID)
+        recruit_role = member.guild.get_role(role_id=RECRUIT_ROLE_ID)
         # recruit_role = RECRUIT_ROLE_ID # Remove after finished
         await member.add_roles(recruit_role, reason ='Member join', atomic = True)
         # Create the DM by default
         await member.create_dm()
         async with member.typing():
             # Check as soon as they've joined
-            await self.update_members(member)
+            await Member_Handler.update_member(Member_Handler,member)
             # Add a welcome message/embed here
             embed = discord.Embed(
                 title="*We hope you rocket to success with us!* :rocket: <:ERPL:809226558988484608>",
                 colour=discord.Colour(0x255c6),
-                description=f"<@{member.id}> Welcome to **ERPL**! Please read our rules on <#{751973296114761788}>.\r\n If you've paid dues, Please set your nick to the name you filled out in payment of dues...\n *<@{801184786580242552}> should do the rest. This will get you access to project channels.*")
+                description=f"<@{member.id}> Welcome to **ERPL**! Please read our rules on <#{960003041178828812}>.\r\n If you've paid dues, Please set your nick to the name you filled out in payment of dues...\n *<@{941072154718531594}> should do the rest. This will get you access to project channels.*")
             embed.set_thumbnail(url="https://discord.com/assets/748ff0e7b2f1f22adecad8463de25945.svg")
             embed.set_author(name="Welcome to the Experimental Rocket Propulsion Lab!")
             await member.guild.get_channel(JOIN_CHANNEL).send(embed=embed)
+        # Message member on join with welcome message
+        await member.send(f"Hello {member.name}, welcome to *ERPL*!\n Please read our rules on #rules-info & we hope you rocket to success with us. 🚀\n If you've paid dues, Please set your nick to the name you filled out in payment of dues.\n *@ERPLDiscordBot should do the rest. (if it doesn't work, complain in #join-boost-system )*\n This will get you access to project channels.")
+
+        
     
-    async def on_member_leave(self, discord_member):
+    async def on_member_leave(self, member):
         """
         This function runs whenever a new member leaves the server
         """
+        # Ignore our own updates
+        if member == self.user:
+            return
+        
+        print(f"{member.name} left")
+        await member.guild.get_channel(JOIN_CHANNEL).send(f"Sorry to see you go {member.name}!")
     
     
     async def on_member_update(self, before, after):
@@ -68,16 +78,18 @@ class ERPLBot(discord.Client):
             # Ignore our own updates
             if after == self.user:
                 return
-            # Here we will just call the update_members function
-            await self.update_members(after.member)
+            # Here we will just call the update_member function
+            await Member_Handler.update_member(Member_Handler,after.member)
 
     async def on_create_project(self, message):
         """
         Create Project Command (Officers Only)
         """
+        await message.channel.send('on_create_project function called')
         # Check to make sure the person sending the message has officer role
         if OFFICER_ROLE_ID in list(map(lambda role: role.id, message.author.roles)):
             # Attempt to split and save the project name
+            await message.channel.send('Officer Role confirmed')
             try:
                 if len(message.content.split(' '))<2:
                     await message.author.send("Project name is empty")
@@ -129,6 +141,7 @@ class ERPLBot(discord.Client):
                 await message.author.create_dm()
                 async with message.author.typing():
                     await message.author.send("***Error creating the project...***\nPlease use the format: `/CreateProject projectName projectLeadUsername true/false` \n Where ProjectName is the name of the project, projectLeadUsername is the username (not nick) of the new project lead, and the boolean is whether sub-chats are created (default:true)")
+                    await message.channel.send(e)
         else:
             print(f'Name Taken: {name}')
 
@@ -189,21 +202,38 @@ class ERPLBot(discord.Client):
         if message.author == self.user:
             return
         
+        # Check to see if the message is from a DM
+        if message.channel.type is discord.ChannelType.private:
+            """
+            DM Commands (All Members)
+            """
+            try:
+                if '/Projects' in message.content:
+                    message.author.dm_channel
+                    async with message.author.typing():
+                        await asyncio.sleep(1)
+                        await message.author.send('Grabbing List of Projects')
+
+            except Exception as e:
+                print(f"An exception occured while sending a DM: \n{e}")
+
         """
         Bot Commands
         """
         # Make sure channel is specified
-        if message.channel == message.guild.get_channel(BOT_COMMAND_CHANNEL):
+        if message.channel.id == BOT_COMMAND_CHANNEL:
             """
-            Create Project Command (Officers Only)
+            Project Commands (Officers Only)
             """
             try:
                 if '/CreateProject' in message.content:
-                    self.on_create_project(self,message)
+                    await message.channel.send('Calling on_create_project function')
+                    await self.on_create_project(message)
 
                 if '/DeleteProject' in message.content:
-                    self.on_delete_project(self,message)
-                         
+                    await message.channel.send('Calling on_delete_project function')
+                    await self.on_delete_project(message)
+
             except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
 
