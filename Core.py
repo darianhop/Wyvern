@@ -1,13 +1,10 @@
-import discord
-import pickle
-# from erplbot.club_members import get_members_from_spreadsheet, Name
 from Oauth import discord_token, retrieve_credentials
-from MemberHandler import JOIN_CHANNEL, OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID, BOT_COMMAND_CHANNEL, JOIN_CHANNEL, \
-    guild_ID
-from MemberHandler import Member_Handler
-from EventsHandler import GoogleCalendar, REMINDER_ID
+from MemberHandler import Member_Handler,\
+     JOIN_CHANNEL, BOT_COMMAND_CHANNEL, guild_ID,\
+     OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID
+import discord
 import asyncio
-from discord.ext import commands
+# from erplbot.club_members import get_members_from_spreadsheet, Name
 # from erplbot.commands import bot_command
 
 class ERPLBot(discord.Client):
@@ -23,9 +20,11 @@ class ERPLBot(discord.Client):
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
         print("Bot initialized")
+        from EventsHandler import GoogleCalendar
         GoogleCalendar.init() # Comment in to turn on passive events listener
         # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)
-      
+
+
     async def on_member_join(self, member):
         """
         This function runs whenever a new member joins the server
@@ -56,7 +55,6 @@ class ERPLBot(discord.Client):
         await member.send(f"Hello {member.name}, welcome to *ERPL*!\n Please read our rules on #rules-info & we hope you rocket to success with us. 🚀\n If you've paid dues, Please set your nick to the name you filled out in payment of dues.\n *@ERPLDiscordBot should do the rest. (if it doesn't work, complain in #join-boost-system )*\n This will get you access to project channels.")
 
         
-    
     async def on_member_leave(self, member):
         """
         This function runs whenever a new member leaves the server
@@ -80,6 +78,7 @@ class ERPLBot(discord.Client):
                 return
             # Here we will just call the update_member function
             await Member_Handler.update_member(Member_Handler,after.member)
+
 
     async def on_create_project(self, message):
         """
@@ -237,12 +236,21 @@ class ERPLBot(discord.Client):
             except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
 
+"""
+    async def calendarEmbed(self, member):
+        embed = discord.Embed(
+            title='*LB-130 Calenar',
+            color=discord.Colour(0x255c6),
+            description="Desc",
+        )
+        from EventsHandler import REMINDER_ID
+        await member.guild.get_channel(REMINDER_ID).send(embed=embed)
+"""
 
 def main():
     """
     Our "main" function
     """
-
     # # Reads our Google API credentials before starting the bot
     # creds = retrieve_credentials()
     # Sets up our intents as a Discord Bot

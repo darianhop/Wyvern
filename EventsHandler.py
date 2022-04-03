@@ -1,20 +1,13 @@
-# from Core import creds
-from calendar import Calendar, calendar
-from multiprocessing import Event
-from discord.ext import tasks, commands
-import discord
-import googlesearch
-from MemberHandler import Member_Handler
-from Oauth import SCOPES, Google_CALENDAR_ID, retrieve_credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from datetime import date, datetime, timedelta
+from datetime import datetime, timedelta
+from Oauth import Google_CALENDAR_ID, retrieve_credentials, discord_token
+from MemberHandler import Member_Handler
+from discord.ext import tasks
+import discord
 import asyncio
 REMINDER_ID = 947286490973634640
-"""
-To renable eventshandler, uncomment "GoogleCalendar.init()" around line 24 in core.
-"""
-class GoogleCalendar:
+class GoogleCalendar(discord.Client):
     """
     Represents a small custom interface to the Google Calendar API
     """
@@ -38,26 +31,16 @@ class GoogleCalendar:
             try:
                 creds = retrieve_credentials()
                 service = build('calendar', 'v3', credentials=creds)
-
-                """Request Debug
-                # calendarRequest = service.calendars().get(calendarId=Google_CALENDAR_ID).execute()
-                # try:
-                #     print(calendarRequest)
-                # except HttpError as e:
-                #     print(e)
-                """
-
             
                 async def EventsListener():
                     """
-                    Listening for events 1 hour to 1hr 5min from now, every 5 minutes
-                    Google Calendar searching works only with UTC Time Zone
+                    Listening for events 1 hour to 1hr 5min from now, every 5 minutes.  Google Calendar searching works only with UTC Time Zone
                     """
 
                     # Setting up time ranges for the calendar search with respect to UTC time zone.
                     now = datetime.utcnow()
                     deltaStartTime = timedelta(hours=1)
-                    deltaEndTime = timedelta(hours=1,minutes=5)
+                    deltaEndTime = timedelta(hours=1,minutes=35)
                     startTime = (now+deltaStartTime).isoformat() + 'Z' # Z is UTC format
                     endTime = (now+deltaEndTime).isoformat() + 'Z' # Z is UTC format
                     now = now.isoformat() + 'Z' # Z is UTC format
@@ -74,9 +57,8 @@ class GoogleCalendar:
                     # Retrieving Events, if there are any
                     try:
                         if not events:
-                            # print('\nNo upcoming events found.')
-                            # print(now,' Current Time\n')
                             return
+
                         # Gather data on all of the events returned from the calendar search
                         for event in events:
                             start = event['start'].get('dateTime', event['start'].get('date'))
@@ -90,24 +72,22 @@ class GoogleCalendar:
                             """
                             # Defining the Current Time and Search Range with respect to this time zone
                             timeZoneNowMath = datetime.now()
-                            timeZoneStartMath = timedelta(hours=1)
-                            timeZoneEndMath = timedelta(hours=1,minutes=5)
-                            timeZoneStart = (timeZoneNowMath + timeZoneStartMath).isoformat()
-                            timeZoneEnd = (timeZoneNowMath + timeZoneEndMath).isoformat()
+                            timeZoneStart = (timeZoneNowMath + deltaStartTime).isoformat()
+                            timeZoneEnd = (timeZoneNowMath + deltaEndTime).isoformat()
                             
-                        # Determining if any of the events returned are starting within the search range in this time zone
-                        if start >= timeZoneStart and start <= timeZoneEnd:
-                            print(timeZoneNowMath, 'current time')
-                            print(start, event['summary'])
-                            embed = discord.Embed(
-                                title='*LB-130 Calenar',
-                                color=discord.Colour(0x255c6),
-                                description="Desc",
-                            )
-                            await discord.Guild.get_channel(Member_Handler,channel_id=REMINDER_ID).send(embed=embed)
-                            """
-                            await statement here
-                            """
+                            # Determining if any of the events returned are starting within the search range in this time zone
+                            if start >= timeZoneStart and start <= timeZoneEnd:
+                                # print(timeZoneNowMath, 'current time')
+                                print(start, event['summary'])
+                                embed = discord.Embed(
+                                    title='*LB-130 Calenar',
+                                    color=discord.Colour(0x255c6),
+                                    description="Desc",
+                                )
+                                # await member.guild.get_channel(REMINDER_ID).send(embed = embed)
+                                """
+                                Cannot send message from this class, need to reference Core and that leads to circular import error
+                                """ 
                         else:
                             return
                         
@@ -115,7 +95,7 @@ class GoogleCalendar:
                         # """
                         # (Currently Returns exception HttpError 400)
                         # """
-                        # new_events_result = service.events().watch(calendarId='rcl.talks@gmail.com', 
+                        # new_events_result = service.events().watch(calendarId=Google_CALENDAR_ID, 
                         #                                 timeMin=now,
                         #                                 # timeMax = endTime,
                         #                                 maxResults=10, singleEvents=True,
