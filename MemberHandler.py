@@ -1,11 +1,18 @@
 import discord
+import os
 import pickle
+import gspread
+import numpy as np
+import pygsheets
+import pandas as pd
 # from erplbot.club_members import get_members_from_spreadsheet, Name
 from discord import client, guild
-from discord.ext import commands, tasks; from discord.ext.commands import bot
-
-from Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE
-#from __future__ import print_function
+from discord.ext import commands, tasks;
+from discord.ext.commands import bot
+from pandas import DataFrame
+from gspread_dataframe import get_as_dataframe, set_with_dataframe
+from Oauth import retrieve_credentials, Google_SPREADSHEET_ID, RANGE
+# from __future__ import print_function
 import os.path
 import json
 from google.auth.transport.requests import Request
@@ -14,8 +21,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import asyncio
+from SheetsHandler import internal_member_Object, values1
 
-
+global internal_member_Object
+global values1
 
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
@@ -24,55 +33,6 @@ PROJECT_ROLE_ID = 956395758200959026
 BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
 guild_ID = 946831225081958410
-
-def __str__(self):
-    return ""
-def iterateDictionary2(key_name, some_list):
-    for d in some_list:
-        print(d[key_name])
-class Name:
-    """
-    Represents a person's name. First and Last
-    """
-
-    def __init__(self, first=None, last=None):
-        """
-        Creates a new Name instance with the optional values
-        """
-        self.first = first
-        self.last = last
-
-    @staticmethod
-    def from_str(s):
-        """
-        Creates a new Name object from the given string.
-        Will only populate the first name if that is the only one given
-        """
-        name = Name()
-
-        # Split the string by spaces
-        name_split = s.split(' ')
-
-        name.first = name_split[0]
-
-        # If their name has more than one word, like a name, store that too
-        if len(name_split) > 1:
-            name.last = name_split[1]
-
-        return name
-
-    def __eq__(self, other):
-        """
-        Overrides the == operator for this type
-        """
-        return self.first == other.first and self.last == other.last
-
-    def __repr__(self):
-        """
-        The internal function called by Python when trying to print this type
-        """
-        return f'{self.first} {self.last}'
-
 
 
 class Member_Handler(discord.Client):
@@ -118,13 +78,12 @@ class Member_Handler(discord.Client):
     #         embed.set_thumbnail(url="https://discord.com/assets/748ff0e7b2f1f22adecad8463de25945.svg")
     #         embed.set_author(name="Welcome to the Experimental Rocket Propulsion Lab!")
     #         await member.guild.get_channel(JOIN_CHANNEL).send(embed=embed)
-            
+
     # async def on_member_leave(self, discord_member):
     #     """
     #     This function runs whenever a new member leaves the server
     #     """
-    
-    
+
     # async def on_member_update(self, before, after):
     #     """
     #     This function runs whenever a new member updates their own profile, like changing their nickname
@@ -136,7 +95,6 @@ class Member_Handler(discord.Client):
     #             return
     #         # Here we will just call the update_members function
     #         await self.update_members(after.member)
-            
 
     # async def on_message(self, message):
     #     """
@@ -146,30 +104,26 @@ class Member_Handler(discord.Client):
     #     # Ignore our own updates
     #     if message.author == self.user:
     #         return
-        
+
     #     # Recognize if the message is a DM
     #     if message.content.startswith('/DM'):
     #         msg = 'This Message is send in DM'
     #         await client.send_message(message.author,)
-        
-        
+
     async def update_member(self, member):
         """
         This function updates the member
         """
         return
 
-    def iterateDictionary2(key_name, some_list):
-        for d in some_list:
-            print(d[key_name])
-
     async def member_list_Sync(self):
         """
         This function Syncs the google sheets
         and discord member lists
         """
-        discord_member_object = []
-        # Pull new google sheets member_object
+
+        # Pulls new google sheets_member_object for comparison
+
         try:
             creds = retrieve_credentials()
             service = build('sheets', 'v4', credentials=creds)
@@ -178,62 +132,94 @@ class Member_Handler(discord.Client):
             sheet = service.spreadsheets()
             result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
                                         range=RANGE).execute()
-            values = result.get('values', [])
+            values2 = result.get('values', [])
 
-            if not values:
+            if not values2:
                 print('No data found.')
             else:
 
-                member_object = []
+                sheets_member_Object = []
 
-                # print('Date, First name, Last name, bool:')
-                for row in values[1:]:
-                    # Print columns A and E, which correspond to indices 0 and 4.
-                    # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-                    member_object.append({values[0][0]: row[0:][0],
-                                          values[0][1]: row[1:][0],
-                                          values[0][2]: row[2:][0],
-                                          values[0][3]: row[3:][0]})
-                    #print(row[1:][0],row[2:][0])
-                print(member_object)
+                for row in values2[1:]:
+                    sheets_member_Object.append({values2[0][0]: row[0:][0],
+                                                 values2[0][1]: row[1:][0],
+                                                 values2[0][2]: row[2:][0],
+                                                 values2[0][3]: row[3:][0]})
 
         except HttpError as err:
             print(err.content)
 
-        #obtain guild members
+        # Pulls and creates new discord member object
         guild = self.get_guild(guild_ID)
         memberList = guild.members
-        print(memberList)
+        discObject = []
 
-        discord_member_object = [dict() for i in range(4)]
-        #print(discord_member_object)
+        # Creates a varible that verifies if
+        # the user has the member role or not
+        for member in memberList[1:]:
+            if MEMBER_ROLE_ID in list(map(lambda role: role.id, member.roles)):
+                pow = 1
+            else:
+                pow = 0
+            discObject.append((member.display_name, pow))
 
-        #discord_member_object
-        # X = bool
-        #
-        # for row2 in memberList[1:]:
-        #  name = str(row2)
-        #  name = name[:-5]
-        #  name = name.split(" ", 1)
-        #  print(name[0])
-        #  # iterateDictionary2('First',member_object)
-        #  list_of_all_values = [value for x in member_object
-        #                        for value in x.values()]
-        #  if name[0] in list_of_all_values:
-        #    #print(row[1:][0])
-        #    print("First name: Match")
-        #    X=True
-        #    if name[1] in list_of_all_values:
-        #        print("Last name: Match")
-        #  else:
-        #    print("nope not the same")
-        #    X=False
-        #    print(X)
-        # print(row2)
-        # print(X)
-        # print("{} {}".format(row[1:][0], row[2:][0]))
+        # Clears out the google-sheets chart before writing
+        gc = gspread.service_account()
 
+        sh = gc.open("Copy of MemberDues Sheet")
 
+        worksheet = sh.get_worksheet(1)
 
+        worksheet.clear()
+
+        # Loops through the google-sheets chart while searching
+        # and verifying wherther on not the user is a member and has
+        # payed dues.
+
+        for lines in discObject:
+
+            name = lines[0].split(" ", 1)
+            print(lines[1])
+            global internal_member_Object
+
+            # Checks first name, last name, and member role status
+            if ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
+                    (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
+                    and lines[1] == 1):
+                user_Mark = next(item for item in internal_member_Object if item['First'] == name[0])
+                user_Mark['Rolled in Discord'] = 'TRUE'
+                user_Mark1 = next(item for item in sheets_member_Object if item['First'] == name[0])
+                user_Mark1['Rolled in Discord'] = 'TRUE'
+
+                gc = gspread.service_account()
+
+                sh = gc.open("Copy of MemberDues Sheet")
+
+                worksheet = sh.get_worksheet(1)
+
+                df = pd.DataFrame(sheets_member_Object)
+
+                set_with_dataframe(worksheet, df)
+
+            elif ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
+                  (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
+                  and lines[1] == 0):
+                user_Mark2 = next(item for item in internal_member_Object if item['First'] == name[0])
+                user_Mark2['Rolled in Discord'] = 'FALSE'
+                user_Mark3 = next(item for item in sheets_member_Object if item['First'] == name[0])
+                user_Mark3['Rolled in Discord'] = 'FALSE'
+
+                gc = gspread.service_account()
+
+                sh = gc.open("Copy of MemberDues Sheet")
+
+                worksheet = sh.get_worksheet(1)
+
+                df = pd.DataFrame(sheets_member_Object)
+
+                set_with_dataframe(worksheet, df)
+
+            else:
+                print('Well....poop...?')
 
         return
