@@ -2,6 +2,7 @@ import discord
 import os
 import pickle
 import gspread
+from httplib2 import Http
 import numpy as np
 import pygsheets
 import pandas as pd
@@ -21,10 +22,10 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import asyncio
-from SheetsHandler import internal_member_Object, values1
 
 global internal_member_Object
 global values1
+from SheetsHandler import internal_member_Object, values1
 
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
@@ -181,45 +182,47 @@ class Member_Handler(discord.Client):
             name = lines[0].split(" ", 1)
             print(lines[1])
             global internal_member_Object
+            try:
+                # Checks first name, last name, and member role status
+                if ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
+                        (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
+                        and lines[1] == 1):
+                    user_Mark = next(item for item in internal_member_Object if item['First'] == name[0])
+                    user_Mark['Rolled in Discord'] = 'TRUE'
+                    user_Mark1 = next(item for item in sheets_member_Object if item['First'] == name[0])
+                    user_Mark1['Rolled in Discord'] = 'TRUE'
 
-            # Checks first name, last name, and member role status
-            if ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
+                    gc = gspread.service_account()
+
+                    sh = gc.open("Copy of MemberDues Sheet")
+
+                    worksheet = sh.get_worksheet(1)
+
+                    df = pd.DataFrame(sheets_member_Object)
+
+                    set_with_dataframe(worksheet, df)
+
+                elif ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
                     (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
-                    and lines[1] == 1):
-                user_Mark = next(item for item in internal_member_Object if item['First'] == name[0])
-                user_Mark['Rolled in Discord'] = 'TRUE'
-                user_Mark1 = next(item for item in sheets_member_Object if item['First'] == name[0])
-                user_Mark1['Rolled in Discord'] = 'TRUE'
+                    and lines[1] == 0):
+                    user_Mark2 = next(item for item in internal_member_Object if item['First'] == name[0])
+                    user_Mark2['Rolled in Discord'] = 'FALSE'
+                    user_Mark3 = next(item for item in sheets_member_Object if item['First'] == name[0])
+                    user_Mark3['Rolled in Discord'] = 'FALSE'
 
-                gc = gspread.service_account()
+                    gc = gspread.service_account()
 
-                sh = gc.open("Copy of MemberDues Sheet")
+                    sh = gc.open("Copy of MemberDues Sheet")
 
-                worksheet = sh.get_worksheet(1)
+                    worksheet = sh.get_worksheet(1)
 
-                df = pd.DataFrame(sheets_member_Object)
+                    df = pd.DataFrame(sheets_member_Object)
 
-                set_with_dataframe(worksheet, df)
+                    set_with_dataframe(worksheet, df)
 
-            elif ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
-                  (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
-                  and lines[1] == 0):
-                user_Mark2 = next(item for item in internal_member_Object if item['First'] == name[0])
-                user_Mark2['Rolled in Discord'] = 'FALSE'
-                user_Mark3 = next(item for item in sheets_member_Object if item['First'] == name[0])
-                user_Mark3['Rolled in Discord'] = 'FALSE'
-
-                gc = gspread.service_account()
-
-                sh = gc.open("Copy of MemberDues Sheet")
-
-                worksheet = sh.get_worksheet(1)
-
-                df = pd.DataFrame(sheets_member_Object)
-
-                set_with_dataframe(worksheet, df)
-
-            else:
+            # else:
+            except HttpError as e:
+                print(e)
                 print('Well....poop...?')
 
         return
