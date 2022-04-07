@@ -1,7 +1,8 @@
+from EventsHandler import GoogleCalendar
 from Oauth import discord_token, retrieve_credentials
 from MemberHandler import Member_Handler,\
      JOIN_CHANNEL, BOT_COMMAND_CHANNEL, guild_ID,\
-     OFFICER_ROLE_ID, PROJECT_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID
+     OFFICER_ROLE_ID, PROJECT1_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID
 import discord
 import asyncio
 # from erplbot.club_members import get_members_from_spreadsheet, Name
@@ -21,7 +22,8 @@ class ERPLBot(discord.Client):
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
         print("Bot initialized")
         from EventsHandler import GoogleCalendar
-        GoogleCalendar.init() # Comment in to turn on passive events listener
+        guilds = self.get_guild(id=guild_ID)
+        GoogleCalendar.init(guilds) # Comment in to turn on passive events listener
         # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)
 
 
@@ -89,7 +91,7 @@ class ERPLBot(discord.Client):
                                 # Assign Permissions to category
 
                             # Give new project lead roles & alert them
-                            await newProjectLead.add_roles(message.guild.get_role(PROJECT_ROLE_ID), reason=f'Project creation by {message.author}')
+                            await newProjectLead.add_roles(message.guild.get_role(PROJECT1_ROLE_ID), reason=f'Project creation by {message.author}')
                             await newProjectLead.add_roles(projectRole, reason=f'Project creation by {message.author}')
                             await newProjectLead.send(f"Project {projectName} created by {message.author}!") 
                             # Send a message back to confirm creation
@@ -102,7 +104,7 @@ class ERPLBot(discord.Client):
                     await message.author.send("***Error creating the project...***\nPlease use the format: `/CreateProject projectName projectLeadUsername true/false` \n Where ProjectName is the name of the project, projectLeadUsername is the username (not nick) of the new project lead, and the boolean is whether sub-chats are created (default:true)")
                     await message.channel.send(e)
         else:
-            print(f'Name Taken: {name}')
+            print(f'Name Taken: {projectName}')
 
     
     async def on_delete_project(self, message):
@@ -128,12 +130,12 @@ class ERPLBot(discord.Client):
                                     # Hide Old Project Channel
                                     await channel.set_permissions(message.guild.get_role(MEMBER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
                                     await channel.set_permissions(message.guild.get_role(RECRUIT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
-                                    await channel.set_permissions(message.guild.get_role(PROJECT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+                                    await channel.set_permissions(message.guild.get_role(PROJECT1_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
                                     await channel.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
                                     # Loop through categories to locate sub-chats
                                     for category in message.guild.categories:
                                         if category.name == projectName+" sub-chats":
-                                            await category.set_permissions(message.guild.get_role(PROJECT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
+                                            await category.set_permissions(message.guild.get_role(PROJECT1_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
                                             await category.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
                                     # Delete Role (not tested, as i couldnt get the /deleteproject to work)
                                     for projectRole in message.guild.roles:
@@ -170,6 +172,8 @@ def main():
     client.run(discord_token)
     client2 = Member_Handler(intents=intents)
     client2.run(discord_token)
+    client3 = GoogleCalendar(intents=intents)
+    client3.run(discord_token)
 
 
 try:

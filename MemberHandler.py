@@ -1,3 +1,4 @@
+from http.client import HTTPException
 import discord
 import os
 import pickle
@@ -27,12 +28,15 @@ global internal_member_Object
 global values1
 from SheetsHandler import internal_member_Object, values1
 
+WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
 OFFICER_ROLE_ID = 956395930830114817
-PROJECT_ROLE_ID = 956395758200959026
+PROJECT1_ROLE_ID = 956395758200959026
 BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
+RULES_INFO_CHANNEL_ID = 960003041178828812
+PROJECT_CATEGORY_ID = 947275136900407347
 guild_ID = 946831225081958410
 
 
@@ -64,7 +68,6 @@ class Member_Handler(discord.Client):
         print(f"{member.name} joined")
         # Give em' the default role
         recruit_role = member.guild.get_role(role_id=RECRUIT_ROLE_ID)
-        # recruit_role = RECRUIT_ROLE_ID # Remove after finished
         await member.add_roles(recruit_role, reason ='Member join', atomic = True)
         # Create the DM by default
         await member.create_dm()
@@ -75,7 +78,7 @@ class Member_Handler(discord.Client):
             embed = discord.Embed(
                 title="*We hope you rocket to success with us!* :rocket: <:ERPL:809226558988484608>",
                 colour=discord.Colour(0x255c6),
-                description=f"<@{member.id}> Welcome to **ERPL**! Please read our rules on <#{960003041178828812}>.\r\n If you've paid dues, Please set your nick to the name you filled out in payment of dues...\n *<@{941072154718531594}> should do the rest. This will get you access to project channels.*")
+                description=f"<@{member.id}> Welcome to **ERPL**! Please read our rules on <#{RULES_INFO_CHANNEL_ID}>.\r\n If you've paid dues, Please set your nick to the name you filled out in payment of dues...\n *<@{WYVERN_ID}> should do the rest. This will get you access to project channels.*")
             embed.set_thumbnail(url="https://discord.com/assets/748ff0e7b2f1f22adecad8463de25945.svg")
             embed.set_author(name="Welcome to the Experimental Rocket Propulsion Lab!")
             await member.guild.get_channel(JOIN_CHANNEL).send(embed=embed)
@@ -121,12 +124,115 @@ class Member_Handler(discord.Client):
             """
             DM Commands (All Members)
             """
+            await Member_Handler.existing_projects(self, message)
+            guilds = self.get_guild(id=guild_ID)
             try:
+                # /Projects Command
                 if '/Projects' in message.content:
                     message.author.dm_channel
                     async with message.author.typing():
                         await asyncio.sleep(1)
                         await message.author.send('Grabbing List of Projects')
+                        async with message.author.typing():
+                            await asyncio.sleep(0.5)
+                            await message.author.send(project_list)
+                # /join Command                            
+                if '/join' in message.content:
+                    try:
+                        if '/join' == message.content:
+                            message.author.dm_channel
+                            async with message.author.typing():
+                                await asyncio.sleep(1)
+                                await message.author.send('Please contact ERFSEDS for additional information.')
+                                await message.author.send('Enter Project Name')
+                                return
+                        for project_name in project_list:
+                            if project_name in message.content:
+                                message.author.dm_channel
+                                async with message.author.typing():
+                                    await asyncio.sleep(1)
+                                    await message.author.send('Valid project')
+                                    await message.author.send(f'Granting {project_name} Role.')
+                                    try:
+                                        roles = []
+                                        roles = guilds.roles
+                                        for role_info in roles:
+                                            if role_info.name == project_name:
+                                                project_role_id=role_info
+                                        member_id = message.author.id
+                                        member = guilds.get_member(member_id)
+                                        # Granting the project role to the member
+                                        await member.add_roles(project_role_id)
+                                        async with message.author.typing():
+                                            await asyncio.sleep(1)
+                                            await message.author.send(f'{project_name} Role Granted')
+
+                                    except HTTPException as e:
+                                        async with message.author.typing():
+                                            await asyncio.sleep(1)
+                                            await message.author.send('Something went wrong. Please contact ERFSEDS for additional information.')
+                                        print(f"An error occured while interacting with a user through DM: \n{e}")
+                                    
+                                    return
+                        else:
+                            async with message.author.typing():
+                                await asyncio.sleep(1)
+                                await message.author.send('Invalid Project')
+                                await message.author.send(project_list)
+                                return
+                    except HTTPException as e:
+                        async with message.author.typing():
+                            await asyncio.sleep(1)
+                            await message.author.send('Something went wrong. Please contact ERFSEDS for additional information.')
+                        print(f"An error occured while interacting with a user through DM: \n{e}")
+                # /leave Command
+                if '/leave' in message.content:
+                    try:
+                        if '/leave' == message.content:
+                            message.author.dm_channel
+                            async with message.author.typing():
+                                await asyncio.sleep(1)
+                                await message.author.send('Enter Project Name')
+                                return
+                        for project_name in project_list:
+                            if project_name in message.content:
+                                message.author.dm_channel
+                                async with message.author.typing():
+                                    await asyncio.sleep(1)
+                                    await message.author.send('Valid project')
+                                    await message.author.send(f'Revoking {project_name} Role.')
+                                    try:
+                                        roles = []
+                                        roles = guilds.roles
+                                        for role_info in roles:
+                                            if role_info.name == project_name:
+                                                project_role=role_info
+                                        member_id = message.author.id
+                                        member = guilds.get_member(member_id)
+                                        # Removing the project role from the member
+                                        await member.remove_roles(project_role)
+                                        async with message.author.typing():
+                                            await asyncio.sleep(1)
+                                            await message.author.send(f'{project_name} Role Revoked')
+
+                                    except HTTPException as e:
+                                        async with message.author.typing():
+                                            await asyncio.sleep(1)
+                                            await message.author.send('Something went wrong. Please contact ERFSEDS for additional information.')
+                                        print(f"An error occured while interacting with a user through DM: \n{e}")
+                                    
+                                    return
+                                    
+                        else:
+                            async with message.author.typing():
+                                await asyncio.sleep(1)
+                                await message.author.send('Invalid Project')
+                                await message.author.send(project_list)
+                                return
+                    except:
+                        async with message.author.typing():
+                            await asyncio.sleep(1)
+                            await message.author.send('Something went wrong. Please contact ERFSEDS for additional information.')
 
             except Exception as e:
                 print(f"An exception occured while sending a DM: \n{e}")
@@ -156,9 +262,23 @@ class Member_Handler(discord.Client):
     
     async def update_member(self, member):
         """
-        This function updates the member
+        This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
         return
+
+
+    async def existing_projects(self, message):
+        try:
+            guilds = self.get_guild(id=guild_ID)
+            global project_list
+            project_list = []
+            
+            for discord.guild.TextChannel in guilds.get_channel(PROJECT_CATEGORY_ID).channels:
+                project_list.append(discord.guild.TextChannel.name)
+                
+            
+        except HttpError as e:
+            print(e)
 
     async def member_list_Sync(self):
         """

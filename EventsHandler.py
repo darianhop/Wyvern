@@ -1,9 +1,11 @@
+from time import strptime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta
 from Oauth import Google_CALENDAR_ID, retrieve_credentials, discord_token
 from MemberHandler import Member_Handler
 from discord.ext import tasks
+from discord import Guild
 import discord
 import asyncio
 REMINDER_ID = 947286490973634640
@@ -12,17 +14,17 @@ class GoogleCalendar(discord.Client):
     Represents a small custom interface to the Google Calendar API
     """
 
-    def init():
-        GoogleCalendar.initializeCalendar.start()
+    def init(guilds):
+        GoogleCalendar.initializeCalendar.start(guilds)
 
     def unload(self):
         self.initializeCalendar.cancel()
 
     @tasks.loop(seconds = 20)
-    async def initializeCalendar():
-        await GoogleCalendar.CalendarInstance()
+    async def initializeCalendar(guilds):
+        await GoogleCalendar.CalendarInstance(guilds)
         
-    async def CalendarInstance():
+    async def CalendarInstance(guilds):
         """
         Creates a new GoogleCalendar instance with the supplied credentials
         """
@@ -32,7 +34,7 @@ class GoogleCalendar(discord.Client):
                 creds = retrieve_credentials()
                 service = build('calendar', 'v3', credentials=creds)
             
-                async def EventsListener():
+                async def EventsListener(guilds):
                     """
                     Listening for events 1 hour to 1hr 5min from now, every 5 minutes.  Google Calendar searching works only with UTC Time Zone
                     """
@@ -40,13 +42,13 @@ class GoogleCalendar(discord.Client):
                     # Setting up time ranges for the calendar search with respect to UTC time zone.
                     now = datetime.utcnow()
                     deltaStartTime = timedelta(hours=1)
-                    deltaEndTime = timedelta(hours=1,minutes=35)
+                    deltaEndTime = timedelta(hours=1,minutes=55)
                     startTime = (now+deltaStartTime).isoformat() + 'Z' # Z is UTC format
                     endTime = (now+deltaEndTime).isoformat() + 'Z' # Z is UTC format
                     now = now.isoformat() + 'Z' # Z is UTC format
                     
                     # Call the Calendar API (Searching Times need to be in UTC time, values for logic are defined later)
-                    events_result = service.events().list(calendarId='rcl.talks@gmail.com', 
+                    events_result = service.events().list(calendarId=Google_CALENDAR_ID, 
                                                         timeMin=startTime,
                                                         timeMax = endTime,
                                                         maxResults=10, singleEvents=True,
@@ -62,7 +64,14 @@ class GoogleCalendar(discord.Client):
                         # Gather data on all of the events returned from the calendar search
                         for event in events:
                             start = event['start'].get('dateTime', event['start'].get('date'))
-                            
+                            end = event['end'].get('dateTime', event['end'].get('date'))
+                            author = event['creator'].get('creator', event['creator'].get('email'))
+                            try:
+                                location = event['location'].get('location')
+                            except:
+                                location = 'undefined'
+                            event_url = event['htmlLink']
+
                             """
                             These definitions below are:
                                  The Current Time in this time zone
@@ -77,17 +86,27 @@ class GoogleCalendar(discord.Client):
                             
                             # Determining if any of the events returned are starting within the search range in this time zone
                             if start >= timeZoneStart and start <= timeZoneEnd:
-                                # print(timeZoneNowMath, 'current time')
+                               
                                 print(start, event['summary'])
                                 embed = discord.Embed(
-                                    title='*LB-130 Calenar',
+                                    name=event['summary'],
+                                    title="Upcoming Event: "+event['summary'],
+                                    url=event_url,
                                     color=discord.Colour(0x255c6),
-                                    description="Desc",
                                 )
-                                # await member.guild.get_channel(REMINDER_ID).send(embed = embed)
-                                """
-                                Cannot send message from this class, need to reference Core and that leads to circular import error
-                                """ 
+                                embed.set_author(name='Internal Calendar')
+                                embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Google_Calendar_icon_%282015-2020%29.svg/246px-Google_Calendar_icon_%282015-2020%29.svg.png")
+
+                                # Converts the Event time to a readable format
+                                event_start_time = datetime.strptime(start,"%Y-%m-%dT%H:%M:%S%z").strftime("%m/%d/%Y, %H:%M:%S")
+                                event_end_time = datetime.strptime(end,"%Y-%m-%dT%H:%M:%S%z").strftime("%m/%d/%Y, %H:%M:%S")
+
+                                embed.add_field(name="Starts:", value= event_start_time, inline=True)
+                                embed.add_field(name="Ends:", value= event_end_time, inline=True)
+                                embed.add_field(name="Location:", value= location, inline=True)
+                                embed.add_field(name="Author", value= author, inline=True)
+                                await guilds.get_channel(channel_id=REMINDER_ID).send(embed = embed)
+
                         else:
                             return
                         
@@ -145,8 +164,8 @@ class GoogleCalendar(discord.Client):
             # Waits 5 minutes and creates a taskS
             print('Events Call at timestamp')
             print(datetime.utcnow())
-            await asyncio.sleep(30)
-            asyncio.create_task(EventsListener())
+            await asyncio.sleep(300)
+            asyncio.create_task(EventsListener(guilds))
             # asyncio.create_task(createdEventsListener())
     
 
