@@ -42,7 +42,7 @@ class GoogleCalendar(discord.Client):
                     # Setting up time ranges for the calendar search with respect to UTC time zone.
                     now = datetime.utcnow()
                     deltaStartTime = timedelta(hours=1)
-                    deltaEndTime = timedelta(hours=1,minutes=55)
+                    deltaEndTime = timedelta(hours=1,minutes=5)
                     startTime = (now+deltaStartTime).isoformat() + 'Z' # Z is UTC format
                     endTime = (now+deltaEndTime).isoformat() + 'Z' # Z is UTC format
                     now = now.isoformat() + 'Z' # Z is UTC format
@@ -66,6 +66,7 @@ class GoogleCalendar(discord.Client):
                             start = event['start'].get('dateTime', event['start'].get('date'))
                             end = event['end'].get('dateTime', event['end'].get('date'))
                             author = event['creator'].get('creator', event['creator'].get('email'))
+                            calendar_name = event['organizer'].get('displayName')
                             try:
                                 location = event['location'].get('location')
                             except:
@@ -94,7 +95,7 @@ class GoogleCalendar(discord.Client):
                                     url=event_url,
                                     color=discord.Colour(0x255c6),
                                 )
-                                embed.set_author(name='Internal Calendar')
+                                embed.set_author(name= calendar_name)
                                 embed.set_thumbnail(url="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Google_Calendar_icon_%282015-2020%29.svg/246px-Google_Calendar_icon_%282015-2020%29.svg.png")
 
                                 # Converts the Event time to a readable format

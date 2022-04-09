@@ -1,4 +1,5 @@
 from http.client import HTTPException
+from urllib.error import HTTPError
 import discord
 import os
 import pickle
@@ -32,7 +33,7 @@ WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
 OFFICER_ROLE_ID = 956395930830114817
-PROJECT1_ROLE_ID = 956395758200959026
+PROJECT_LEAD_ROLE_ID = 956395758200959026
 BOT_COMMAND_CHANNEL = 947286454277656587
 JOIN_CHANNEL = 956969343994978376
 RULES_INFO_CHANNEL_ID = 960003041178828812
@@ -41,21 +42,6 @@ guild_ID = 946831225081958410
 
 
 class Member_Handler(discord.Client):
-
-    # def initMember():
-    #     Member_Handler.initializeMemberHandler.start()
-
-    # def unload(self):
-    #     self.initializeMemberHandler.cancel()
-
-    # @tasks.loop(seconds = 20)
-    # async def initializeMemberHandler():
-    #     # await Member_Handler().on_member_join(None)
-    #     # loop = asyncio.new_event_loop()
-    #     # tasks = Member_Handler.on_member_join(Member_Handler, Member_Handler.user)
-    #     # (loop.run_until_complete(tasks))
-    #     # asyncio.to_thread
-    #     await Member_Handler.on_member_join(Member_Handler, discord.Member)
 
     async def member_join(self, member):
         """
@@ -82,9 +68,27 @@ class Member_Handler(discord.Client):
             embed.set_thumbnail(url="https://discord.com/assets/748ff0e7b2f1f22adecad8463de25945.svg")
             embed.set_author(name="Welcome to the Experimental Rocket Propulsion Lab!")
             await member.guild.get_channel(JOIN_CHANNEL).send(embed=embed)
-        # Message member on join with welcome message
-        await member.send(f"Hello {member.name}, welcome to *ERPL*!\n Please read our rules on #rules-info & we hope you rocket to success with us. 🚀\n If you've paid dues, Please set your nick to the name you filled out in payment of dues.\n *@Wyvern should do the rest. (if it doesn't work, complain in #join-boost-system )*\n This will get you access to project channels.")
+            # Message member on join with welcome message
+            DM_embed=discord.Embed(title="Please read our rules on #rules-info & we hope you rocket to success with us. 🚀", 
+                                colour=discord.Colour(0x255c6),
+                                description="If you've paid dues, Please set your nick to the name you filled out in payment of dues. *@Wyvern should do the rest. (if it doesn't work, complain in #join-boost-system )*"
+                                )
+            DM_embed.set_author(name=f"Hello {member.name}, welcome to ERPL!")
+            DM_embed.add_field(name="/Projects", value="Lists the current projects.", inline=False)
+            DM_embed.add_field(name="/join {Project Name}", value="Grants you the role for that project so you can stay informed!", inline=False)
+            DM_embed.add_field(name="/leave {Project Name}", value="Revokes that project's role from you, they'll be sad to see you go.", inline=True)
+            await member.send(embed=DM_embed)
 
+            
+        # await member.send(f"Hello {member.name}, welcome to *ERPL*!\
+        # \n Please read our rules on #rules-info & we hope you rocket to success with us. 🚀\
+        # \n If you've paid dues, Please set your nick to the name you filled out in payment of dues.\
+        # \n *@Wyvern should do the rest. (if it doesn't work, complain in #join-boost-system )*\
+        # \n======\
+        # \nCommands\
+        # \n======\
+        # \n <#/join> This will get you access to project channels.")
+        
 
     async def member_leave(self, member):
         """
@@ -115,6 +119,11 @@ class Member_Handler(discord.Client):
         """
         This function runs whenever a message is sent
         """
+        # Collect list of existing projects
+        await Member_Handler.existing_projects(self, message)
+        # Pass the guild info
+        guilds = self.get_guild(id=guild_ID)
+        
         # Ignore our own messages
         if message.author == self.user:
             return
@@ -124,8 +133,6 @@ class Member_Handler(discord.Client):
             """
             DM Commands (All Members)
             """
-            await Member_Handler.existing_projects(self, message)
-            guilds = self.get_guild(id=guild_ID)
             try:
                 # /Projects Command
                 if '/Projects' in message.content:
@@ -139,6 +146,7 @@ class Member_Handler(discord.Client):
                 # /join Command                            
                 if '/join' in message.content:
                     try:
+                        # If message only says '/join'
                         if '/join' == message.content:
                             message.author.dm_channel
                             async with message.author.typing():
@@ -146,13 +154,16 @@ class Member_Handler(discord.Client):
                                 await message.author.send('Please contact ERFSEDS for additional information.')
                                 await message.author.send('Enter Project Name')
                                 return
+                        # Check to see if message contains the name of an existing project
                         for project_name in project_list:
+                            # If the message has the name of a project
                             if project_name in message.content:
                                 message.author.dm_channel
                                 async with message.author.typing():
                                     await asyncio.sleep(1)
                                     await message.author.send('Valid project')
                                     await message.author.send(f'Granting {project_name} Role.')
+                                    # Search the guild for the role associated with the designated project, and grant the member that role
                                     try:
                                         roles = []
                                         roles = guilds.roles
@@ -174,6 +185,7 @@ class Member_Handler(discord.Client):
                                         print(f"An error occured while interacting with a user through DM: \n{e}")
                                     
                                     return
+                        # Catch all for any misspellings
                         else:
                             async with message.author.typing():
                                 await asyncio.sleep(1)
@@ -188,19 +200,23 @@ class Member_Handler(discord.Client):
                 # /leave Command
                 if '/leave' in message.content:
                     try:
+                        # If message only says '/leave'
                         if '/leave' == message.content:
                             message.author.dm_channel
                             async with message.author.typing():
                                 await asyncio.sleep(1)
                                 await message.author.send('Enter Project Name')
                                 return
+                        # Check to see if message contains the name of an existing project
                         for project_name in project_list:
+                            # If the message has the name of a project
                             if project_name in message.content:
                                 message.author.dm_channel
                                 async with message.author.typing():
                                     await asyncio.sleep(1)
                                     await message.author.send('Valid project')
                                     await message.author.send(f'Revoking {project_name} Role.')
+                                    # Search the guild for the role associated with the designated project, and revoke the role from that member
                                     try:
                                         roles = []
                                         roles = guilds.roles
@@ -222,7 +238,7 @@ class Member_Handler(discord.Client):
                                         print(f"An error occured while interacting with a user through DM: \n{e}")
                                     
                                     return
-                                    
+                        # Catch all for any misspellings         
                         else:
                             async with message.author.typing():
                                 await asyncio.sleep(1)
@@ -233,10 +249,10 @@ class Member_Handler(discord.Client):
                         async with message.author.typing():
                             await asyncio.sleep(1)
                             await message.author.send('Something went wrong. Please contact ERFSEDS for additional information.')
-
+            # Error message for DM
             except Exception as e:
                 print(f"An exception occured while sending a DM: \n{e}")
-
+            # End of DM Section
         """
         Bot Commands
         """
@@ -246,20 +262,131 @@ class Member_Handler(discord.Client):
             Project Commands (Officers Only)
             """
             try:
+                # /CreateProject {projectName} {Project Lead} Command
                 if '/CreateProject' in message.content:
-                    await message.channel.send('Calling on_create_project function')
-                    await self.on_create_project(message)
-
+                    # Check to make sure the person sending the message has officer role
+                    if guilds.get_role(OFFICER_ROLE_ID) in message.author.roles:
+                        await Member_Handler.create_project(self, message, guilds)
+                        await message.channel.send(f'Text Channel and Role {projectName} Created')
+                
+                # /DeleteProject {} {} Command
                 if '/DeleteProject' in message.content:
-                    await message.channel.send('Calling on_delete_project function')
-                    await self.on_delete_project(message)
+                    await Member_Handler.delete_project(self, message, guilds)
 
-            except Exception as e:
+
+            except HttpError as e:
                 await asyncio.sleep(1)
                 print(f"An exception occured while creating a new project:\n{e}")
                 pass
     
     
+    async def create_project(self, message, guilds):
+        """
+        Create Project Command (Officers Only)
+        """
+        # Attempt to split and save the project name
+        await message.channel.send('Officer Role confirmed')
+        try:
+            if len(message.content.split(' '))<2:
+                await message.author.send("Project name is empty")
+            global projectName
+            projectName = message.content.split(' ')[1]
+            print(len(message.content.split(' ')))
+            # Get the new project lead
+            newProjectLead = message.guild.get_member_named(message.content.split(' ')[2])
+            if len(message.content.split(' ')) >=3:
+                subChatBool = message.content.split(' ')[3]
+            else:
+                subChatBool = True
+            # Get category, names, and channels
+            await Member_Handler.existing_projects(self, message)
+            for projects in project_list:
+                if projectName  not in project_list:
+                    #create channel
+                    await discord.TextChannel.clone(guilds.get_channel(project_id_list[0]),name=projectName)
+                    await guilds.create_role(name=projectName)
+                    project_lead_role = guilds.get_role(role_id=PROJECT_LEAD_ROLE_ID)
+                    await newProjectLead.add_roles(project_lead_role)
+                    return
+                
+        except HttpError as e:
+            print(f"User entry failed: {message.content} \n {e}")
+            await message.author.create_dm()
+            async with message.author.typing():
+                await message.author.send("***Error creating the project...***\nPlease use the format: `/CreateProject projectName projectLeadUsername true/false` \n Where ProjectName is the name of the project, projectLeadUsername is the username (not nick) of the new project lead, and the boolean is whether sub-chats are created (default:true)")
+                await message.channel.send(e)
+        else:
+            try:
+                print(f'Name Taken: {projectName}')
+            except:
+                pass
+
+
+    async def delete_project(self, message, guilds):
+        """
+        Delete Project Command (Officers Only)
+        """
+        # Attempt to split and save the project name
+        await message.channel.send('Officer Role confirmed')
+        try:
+            if len(message.content.split(' '))<2:
+                await message.author.send("Project name is empty")
+            global projectName
+            projectName = message.content.split(' ')[1]
+            print(len(message.content.split(' ')))
+            if len(message.content.split(' ')) >=3:
+                subChatBool = message.content.split(' ')[3]
+            else:
+                subChatBool = True
+            # Get category, names, and channels
+            await Member_Handler.existing_projects(self, message)
+            for projects in project_list:
+                # Verify channel and role exist
+                if projectName in project_list:
+                    for channel in project_list:
+                        if projectName == guilds.get_channel(project_list):
+                            channel = project_id_list
+                    # Locate the Project Lead and remove them
+
+                    # Hide Old Project Channel
+                    await channel.set_permissions(message.guild.get_role(MEMBER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+                    await channel.set_permissions(message.guild.get_role(RECRUIT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+                    await channel.set_permissions(message.guild.get_role(PROJECT_LEAD_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+                    await channel.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+                    # Loop through categories to locate sub-chats
+                    for category in message.guild.categories:
+                        if category.name == projectName+" sub-chats":
+                            await category.set_permissions(message.guild.get_role(PROJECT_LEAD_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
+                            await category.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
+                    # Delete Role (not tested, as i couldnt get the /deleteproject to work)
+                    for projectRole in message.guild.roles:
+                        if projectRole.name == projectName:
+                            await projectRole.delete(reason=f'Project Deleted by {message.author}')
+                    # Send a message back to confirm deletion
+                    await message.channel.send(f"Project {projectName} deleted!")
+
+
+                # """
+                # not done yet
+                # """
+                # #delte channel
+                # await discord.TextChannel.clone(guilds.get_channel(project_id_list[0]),name=projectName)
+                # await guilds.create_role(name=projectName)
+                # return  
+
+                else:
+                    await message.author.create_dm()
+                    async with message.author.typing():
+                        await message.author.send(f"The project, {projectName}, doesn't exist!")
+            
+                   
+        except HTTPError as e:
+            print(f"User entry failed: {message.content} \n {e}")
+            await message.author.create_dm()
+            async with message.author.typing():
+                await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
+
+
     async def update_member(self, member):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
@@ -272,11 +399,13 @@ class Member_Handler(discord.Client):
             guilds = self.get_guild(id=guild_ID)
             global project_list
             project_list = []
+            global project_id_list
+            project_id_list = []
             
             for discord.guild.TextChannel in guilds.get_channel(PROJECT_CATEGORY_ID).channels:
                 project_list.append(discord.guild.TextChannel.name)
-                
-            
+                project_id_list.append(discord.guild.TextChannel.id)
+            return project_list, project_id_list
         except HttpError as e:
             print(e)
 
