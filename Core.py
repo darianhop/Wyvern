@@ -1,7 +1,7 @@
 from EventsHandler import GoogleCalendar
 from Oauth import discord_token, retrieve_credentials
 from MemberHandler import Member_Handler,\
-     JOIN_CHANNEL, BOT_COMMAND_CHANNEL, guild_ID,\
+     JOIN_CHANNEL_ID, BOT_COMMAND_CHANNEL_ID, guild_ID,\
      OFFICER_ROLE_ID, PROJECT_LEAD_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID
 import discord
 import asyncio

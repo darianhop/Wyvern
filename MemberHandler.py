@@ -32,13 +32,32 @@ from SheetsHandler import internal_member_Object, values1
 WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
 MEMBER_ROLE_ID = 946832420798337054
-OFFICER_ROLE_ID = 956395930830114817
 PROJECT_LEAD_ROLE_ID = 956395758200959026
-BOT_COMMAND_CHANNEL = 947286454277656587
-JOIN_CHANNEL = 956969343994978376
+OFFICER_ROLE_ID = 956395930830114817
+REMINDER_CHANNEL_ID = 947286490973634640
+BOT_COMMAND_CHANNEL_ID = 947286454277656587
+JOIN_CHANNEL_ID = 956969343994978376
 RULES_INFO_CHANNEL_ID = 960003041178828812
 PROJECT_CATEGORY_ID = 947275136900407347
 guild_ID = 946831225081958410
+
+"""
+ERPL temp ids
+
+WYVERN_ID = 941072154718531594
+RECRUIT_ROLE_ID = 962178982869086210
+MEMBER_ROLE_ID = 962178982869086211
+PROJECT_LEAD_ROLE_ID = 962178982869086212
+OFFICER_ROLE_ID = 962178982869086213
+REMINDER_CHANNEL_ID = 962178983078797390        #reminders
+BOT_COMMAND_CHANNEL_ID = 962178983078797389     #officer-chat
+JOIN_CHANNEL_ID = 962178983573721150            #join-boost
+RULES_INFO_CHANNEL_ID = 962178983078797387      #rules-info
+PROJECT_CATEGORY_ID = 962178983078797391
+guild_ID = 962178982575505499
+"""
+
+
 
 
 class Member_Handler(discord.Client):
@@ -67,7 +86,7 @@ class Member_Handler(discord.Client):
                 description=f"<@{member.id}> Welcome to **ERPL**! Please read our rules on <#{RULES_INFO_CHANNEL_ID}>.\r\n If you've paid dues, Please set your nick to the name you filled out in payment of dues...\n *<@{WYVERN_ID}> should do the rest. This will get you access to project channels.*")
             embed.set_thumbnail(url="https://discord.com/assets/748ff0e7b2f1f22adecad8463de25945.svg")
             embed.set_author(name="Welcome to the Experimental Rocket Propulsion Lab!")
-            await member.guild.get_channel(JOIN_CHANNEL).send(embed=embed)
+            await member.guild.get_channel(JOIN_CHANNEL_ID).send(embed=embed)
             # Message member on join with welcome message
             DM_embed=discord.Embed(title="Please read our rules on #rules-info & we hope you rocket to success with us. 🚀", 
                                 colour=discord.Colour(0x255c6),
@@ -99,7 +118,7 @@ class Member_Handler(discord.Client):
             return
         
         print(f"{member.name} left")
-        await member.guild.get_channel(JOIN_CHANNEL).send(f"Sorry to see you go {member.name}!")
+        await member.guild.get_channel(JOIN_CHANNEL_ID).send(f"Sorry to see you go {member.name}!")
 
 
     async def member_update(self, before, after):
@@ -257,7 +276,7 @@ class Member_Handler(discord.Client):
         Bot Commands
         """
         # Make sure channel is specified
-        if message.channel.id == BOT_COMMAND_CHANNEL:
+        if message.channel.id == BOT_COMMAND_CHANNEL_ID:
             """
             Project Commands (Officers Only)
             """
@@ -304,7 +323,18 @@ class Member_Handler(discord.Client):
                 if projectName  not in project_list:
                     #create channel
                     await discord.TextChannel.clone(guilds.get_channel(project_id_list[0]),name=projectName)
-                    await guilds.create_role(name=projectName)
+                    # Gather the list of the existing roles
+                    await Member_Handler.existing_roles(self)
+                    for roles in roles_list:
+                        if projectName not in roles_name_list:
+                            # If role of that name does not exist, make one
+                            await guilds.create_role(name=projectName)
+                            # for role in guilds.roles:
+                            #     if role.name == projectName:
+                            #         perms = discord.Permissions()
+                            #         perms.update(create_instant_invite = False, change_nickname = False, read_messages = True, read_message_history = True, connect = True, speak = True, send_messages = False)
+                            #         await role.edit(reason = None, colour = discord.Colour.orange(), permissions=perms)
+                    # Give the project lead the role
                     project_lead_role = guilds.get_role(role_id=PROJECT_LEAD_ROLE_ID)
                     await newProjectLead.add_roles(project_lead_role)
                     return
@@ -324,6 +354,7 @@ class Member_Handler(discord.Client):
 
     async def delete_project(self, message, guilds):
         """
+        Not Working
         Delete Project Command (Officers Only)
         """
         # Attempt to split and save the project name
@@ -365,15 +396,6 @@ class Member_Handler(discord.Client):
                     # Send a message back to confirm deletion
                     await message.channel.send(f"Project {projectName} deleted!")
 
-
-                # """
-                # not done yet
-                # """
-                # #delte channel
-                # await discord.TextChannel.clone(guilds.get_channel(project_id_list[0]),name=projectName)
-                # await guilds.create_role(name=projectName)
-                # return  
-
                 else:
                     await message.author.create_dm()
                     async with message.author.typing():
@@ -408,6 +430,28 @@ class Member_Handler(discord.Client):
             return project_list, project_id_list
         except HttpError as e:
             print(e)
+            pass
+
+    async def existing_roles(self):
+        try:
+            guilds = self.get_guild(id=guild_ID)
+            global roles_list
+            roles_list = []
+            global roles_name_list
+            roles_name_list = []
+            global role_ids
+            role_ids =[]
+            
+            for discord.guild.Role in guilds.roles:
+                # roles_list.append(discord.guild.Role)
+                roles_name_list.append(discord.guild.Role.name)
+                role_ids.append(discord.guild.Role.id)
+            return roles_list, roles_name_list, role_ids
+        except HTTPError as e:
+            print(e)
+            pass
+
+
 
     async def member_list_Sync(self):
         """

@@ -3,12 +3,12 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta
 from Oauth import Google_CALENDAR_ID, retrieve_credentials, discord_token
-from MemberHandler import Member_Handler
+from MemberHandler import Member_Handler, REMINDER_CHANNEL_ID
 from discord.ext import tasks
 from discord import Guild
 import discord
 import asyncio
-REMINDER_ID = 947286490973634640
+
 class GoogleCalendar(discord.Client):
     """
     Represents a small custom interface to the Google Calendar API
@@ -106,7 +106,7 @@ class GoogleCalendar(discord.Client):
                                 embed.add_field(name="Ends:", value= event_end_time, inline=True)
                                 embed.add_field(name="Location:", value= location, inline=True)
                                 embed.add_field(name="Author", value= author, inline=True)
-                                await guilds.get_channel(channel_id=REMINDER_ID).send(embed = embed)
+                                await guilds.get_channel(channel_id=REMINDER_CHANNEL_ID).send(embed = embed)
 
                         else:
                             return
