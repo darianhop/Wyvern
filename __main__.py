@@ -1,11 +1,11 @@
+import SheetsHandler
 from EventsHandler import GoogleCalendar
 from Oauth import discord_token, retrieve_credentials
-from MemberHandler import Member_Handler,guild_ID
+from MemberHandler import Member_Handler,guild_ID, MEMBER_ROLE_ID
+from SheetsHandler import Sheets_Handler
 import discord
 
-
-
-
+from SheetsHandler import Sheets_Handler
 
 
 class ERPLBot(discord.Client):
@@ -17,7 +17,7 @@ class ERPLBot(discord.Client):
         """
         This function runs when the bot is connected to Discord
         """
-        await Member_Handler.member_list_Sync(self)
+        await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members')) 
         """
@@ -65,6 +65,8 @@ def main():
     client2.run(discord_token)
     client3 = GoogleCalendar(intents=intents)
     client3.run(discord_token)
+    client4 = Sheets_Handler(intents=intents)
+    client4.run(discord_token)
 
 
 try:

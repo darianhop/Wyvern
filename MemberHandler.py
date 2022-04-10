@@ -1,8 +1,13 @@
+import os
 from http.client import HTTPException
 from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
+
+from SheetsHandler import Sheets_Handler
+
+global internal_member_Object
 
 WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
@@ -105,6 +110,20 @@ class Member_Handler(discord.Client):
             desired_state = True
             # Here we will just call the update_member function
             await Member_Handler.update_member(self, after, desired_state)
+
+            # print(update_member_role)
+            #
+            # member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
+            # for accounts in guilds.members:
+            #     if after == guilds.members.display_name:
+            #         member_id = guilds.members
+            #         await member_id.add_roles(member_role, roeasn='Member join', atomic=True)
+            #
+            # await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, desired_state)
+            #
+            # return
+
+
 
 
     async def message(self, message):
@@ -441,37 +460,33 @@ class Member_Handler(discord.Client):
         # set the boolean to what was passed,
         # call and return true.
         # Else false.
-        # global guilds
-        # guilds = self.get_guild(id=guild_ID)
+        global guilds
+        guilds = self.get_guild(id=guild_ID)
         #
-        # print(after)
-        # name = after.split(" ",1)
-        # print(name[0])
-        # print(name[1])
-        # print("Before" f"{internal_member_Object}")
-        # if ((list(filter(lambda person: (person['First'] == name[0]) and person['Last'] == name[1] and person['Rolled in Discord'] != desired_state, internal_member_Object)))):
-        #
-        #         role_Mark = next(item for item in internal_member_Object if item['First'] == name[0] and item['Last'] == name[1])
-        #         role_Mark['Rolled in Discord'] = 'TRUE'
-        #
-        #         print("After" f"{internal_member_Object}")
-        #
-        #
-        #
-        # else:
-        #     print("Nope Nope Nope...")
-        #
-        #     await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
-        #
-        #     if synclist_boolean_returned == True:
-        #
-        #         member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
-        #         for accounts in guilds.members:
-        #             if after == guilds.members.display_name:
-        #                 member_id = guilds.members
-        #                 await member_id.add_roles(member_role, roeasn='Member join', atomic=True)
-        #
-        return
+        print(after)
+        name = after.split(" ",1)
+        print(name[0])
+        print(name[1])
+        print("Before" f"{internal_member_Object}")
+        try:
+            if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled in Discord'] != str(desired_state).upper(), internal_member_Object)))):
+
+                    role_Mark = next(item for item in internal_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower() and item['Rolled in Discord'] != str(desired_state).upper())
+                    role_Mark['Rolled in Discord'] = 'TRUE'
+
+                    update_member_role = True
+                    print("After" f"{internal_member_Object}")
+                    print(update_member_role)
+
+            else:
+                    print("Nope Nope Nope...")
+                    update_member_role = False
+                    print(update_member_role)
+
+        except HttpError as e:
+            print(e)
+
+        return update_member_role
 
 
     async def existing_projects(self, message):
