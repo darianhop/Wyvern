@@ -463,10 +463,10 @@ class Member_Handler(discord.Client):
         global guilds
         guilds = self.get_guild(id=guild_ID)
         #
-        print(after)
+        # print(after)
         name = after.split(" ",1)
-        print(name[0])
-        print(name[1])
+        # print(name[0])
+        # print(name[1])
         print('Before')
         print(internal_member_Object)
         try:
