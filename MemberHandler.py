@@ -4,10 +4,10 @@ from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
-
-from SheetsHandler import Sheets_Handler
-
+from SheetsHandler import Sheets_Handler, internal_member_Object
 global internal_member_Object
+global values1
+
 
 WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
@@ -101,27 +101,26 @@ class Member_Handler(discord.Client):
         """
         This function runs whenever a new member updates their own profile, like changing their nickname
         """
+        guilds = self.get_guild(id=guild_ID)
+
         if before.display_name != after.display_name:
             print(f"{before.name} updated to {after.display_name}")
             # Ignore our own updates
             if after == self.user:
              return
-            after = after.display_name
+
             desired_state = True
             # Here we will just call the update_member function
-            await Member_Handler.update_member(self, after, desired_state)
+            if await Member_Handler.update_member(self, after.display_name, desired_state) == True:
 
-            # print(update_member_role)
-            #
-            # member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
-            # for accounts in guilds.members:
-            #     if after == guilds.members.display_name:
-            #         member_id = guilds.members
-            #         await member_id.add_roles(member_role, roeasn='Member join', atomic=True)
-            #
-            # await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, desired_state)
-            #
-            # return
+                recruit_role = guilds.get_role(role_id=RECRUIT_ROLE_ID)
+                await after.remove_roles(recruit_role, reason='Member join', atomic=True)
+
+                member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
+                await after.add_roles(member_role, reason='Member join', atomic=True)
+                await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
+
+            return
 
 
 
@@ -455,6 +454,7 @@ class Member_Handler(discord.Client):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
+        global internal_member_Object
         # If exists,
         # and the currently filled boolean is opposite disired_state,
         # set the boolean to what was passed,
@@ -467,7 +467,8 @@ class Member_Handler(discord.Client):
         name = after.split(" ",1)
         print(name[0])
         print(name[1])
-        print("Before" f"{internal_member_Object}")
+        print('Before')
+        print(internal_member_Object)
         try:
             if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled in Discord'] != str(desired_state).upper(), internal_member_Object)))):
 
@@ -475,12 +476,15 @@ class Member_Handler(discord.Client):
                     role_Mark['Rolled in Discord'] = 'TRUE'
 
                     update_member_role = True
-                    print("After" f"{internal_member_Object}")
+                    print('After')
+                    print(internal_member_Object)
                     print(update_member_role)
 
             else:
                     print("Nope Nope Nope...")
                     update_member_role = False
+                    print('After')
+                    print(internal_member_Object)
                     print(update_member_role)
 
         except HttpError as e:

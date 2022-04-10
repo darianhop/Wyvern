@@ -12,46 +12,45 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE, SCOPES
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+global internal_member_Object
 
 # def create_internal_member_object():
-class Sheets_Handler:
 
 
-    try:
-        global values1
-        creds = retrieve_credentials()
-        service = build('sheets', 'v4', credentials=creds)
+try:
+    global values1
+    creds = retrieve_credentials()
+    service = build('sheets', 'v4', credentials=creds)
 
-        # Call the Sheets API
-        sheet = service.spreadsheets()
-        result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                    range=RANGE).execute()
-        values1 = result.get('values', [])
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
+                                range=RANGE).execute()
+    values1 = result.get('values', [])
 
-        if not values1:
-            print('No data found.')
-        else:
+    if not values1:
+        print('No data found.')
+    else:
 
+        global internal_member_Object
 
+        internal_member_Object = []
 
-            global internal_member_Object
-
-            internal_member_Object = []
-
-            # print('Date, First name, Last name, bool:')
-            for row in values1[1:]:
-                # Print columns A and E, which correspond to indices 0 and 4.
-                # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-                internal_member_Object.append({values1[0][0]: row[0:][0],
-                                             values1[0][1]: row[1:][0],
-                                             values1[0][2]: row[2:][0],
-                                             values1[0][3]: row[3:][0]})
+        # print('Date, First name, Last name, bool:')
+        for row in values1[1:]:
+            # Print columns A and E, which correspond to indices 0 and 4.
+            # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
+            internal_member_Object.append({values1[0][0]: row[0:][0],
+                                         values1[0][1]: row[1:][0],
+                                         values1[0][2]: row[2:][0],
+                                         values1[0][3]: row[3:][0]})
 
 
+except HttpError as err:
+    print(err.content)
 
-    except HttpError as err:
-        print(err.content)
+class Sheets_Handler():
+
 
     async def member_list_Sync(self, guild_ID, MEMBER_ROLE_ID):
         """
@@ -94,7 +93,8 @@ class Sheets_Handler:
 
         # Creates a varible that verifies if
         # the user has the member role or not
-        for member in memberList[1:]:
+        for member in memberList:
+
             if MEMBER_ROLE_ID in list(map(lambda role: role.id, member.roles)):
                 pow = 1
             else:
@@ -109,7 +109,9 @@ class Sheets_Handler:
         for lines in discObject:
 
             name = lines[0].split(" ", 1)
-            #print(lines[1])
+            # print(lines[1])
+            # print(name[0])
+            # print(name[1])
             global internal_member_Object
 
             try:
