@@ -25,9 +25,9 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import asyncio
 
+
 global internal_member_Object
-global values1
-from SheetsHandler import internal_member_Object, values1
+from SheetsHandler import  Sheets_Handler
 
 WYVERN_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
@@ -129,9 +129,13 @@ class Member_Handler(discord.Client):
             print(f"{before.name} updated to {after.display_name}")
             # Ignore our own updates
             if after == self.user:
-                return
+             return
+
+
+            after = after.display_name
+            desired_state = True
             # Here we will just call the update_member function
-            await Member_Handler.update_member(Member_Handler,after.member)
+            await Member_Handler.update_member(self, after, desired_state)
 
 
     async def message(self, message):
@@ -408,24 +412,94 @@ class Member_Handler(discord.Client):
             async with message.author.typing():
                 await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
 
+    # async def on_delete_project(self, message):
+    #     """
+    #     Delete Project Command (Officers Only)
+    #     """
+    #     # Check to make sure the person sending the message has officer role
+    #     if OFFICER_ROLE_ID in list(map(lambda role: role.id, message.author.roles)):
+    #         # Attempt to split and save the project name
+    #         try:
+    #             if len(message.content.split(' '))<2:
+    #                 await message.author.send("Project name is empty")
+    #             projectName = message.content.split(' ')[1].lower()
+    #             # Get category, names, and channels
+    #             for category in message.guild.categories:
+    #                 if category.name == "Projects":
+    #                     # Check to make sure the channel/project already exists
+    #                     if projectName in [channel.name for channel in category.channels]:
+    #                         for channel in category.channels:
+    #                             if channel.name == projectName:
+    #                                 # Locate the Project Lead and remove them
 
-    async def update_member(self, member):
+    #                                 # Hide Old Project Channel
+    #                                 await channel.set_permissions(message.guild.get_role(MEMBER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+    #                                 await channel.set_permissions(message.guild.get_role(RECRUIT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+    #                                 await channel.set_permissions(message.guild.get_role(PROJECT1_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+    #                                 await channel.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
+    #                                 # Loop through categories to locate sub-chats
+    #                                 for category in message.guild.categories:
+    #                                     if category.name == projectName+" sub-chats":
+    #                                         await category.set_permissions(message.guild.get_role(PROJECT1_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
+    #                                         await category.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
+    #                                 # Delete Role (not tested, as i couldnt get the /deleteproject to work)
+    #                                 for projectRole in message.guild.roles:
+    #                                     if projectRole.name == projectName:
+    #                                         await projectRole.delete(reason=f'Project Deleted by {message.author}')
+    #                                 # Send a message back to confirm deletion
+    #                                 await message.channel.send(f"Project {projectName} deleted!")
+    #                     else:
+    #                         await message.author.create_dm()
+    #                         async with message.author.typing():
+    #                             await message.author.send(f"The project, {projectName}, doesn't exist!")
+
+    #         except Exception as e:
+    #             print(f"User entry failed: {message.content} \n {e}")
+    #             await message.author.create_dm()
+    #             async with message.author.typing():
+    #                 await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
+        return
+
+
+    async def update_member(self, after, desired_state):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
-        print(member)
-
-        # if ((list(filter(lambda person: (person['First'] == name[0]), internal_member_Object))) and
-        #         (list(filter(lambda person: (person['Last'] == name[1]), internal_member_Object)))
-        #         and lines[1] == 1):
+        # If exists,
+        # and the currently filled boolean is opposite disired_state,
+        # set the boolean to what was passed,
+        # call and return true.
+        # Else false.
+        # global guilds
+        # guilds = self.get_guild(id=guild_ID)
+        #
+        # print(after)
+        # name = after.split(" ",1)
+        # print(name[0])
+        # print(name[1])
+        # print("Before" f"{internal_member_Object}")
+        # if ((list(filter(lambda person: (person['First'] == name[0]) and person['Last'] == name[1] and person['Rolled in Discord'] != desired_state, internal_member_Object)))):
+        #
+        #         role_Mark = next(item for item in internal_member_Object if item['First'] == name[0] and item['Last'] == name[1])
+        #         role_Mark['Rolled in Discord'] = 'TRUE'
+        #
+        #         print("After" f"{internal_member_Object}")
         #
         #
-        # elif ((list(filter(lambda person: (person['First'] == name[0]), internal_member_Object))) and
-        #         (list(filter(lambda person: (person['Last'] == name[1]), internal_member_Object)))
-        #         and lines[1] == 1):
-
-
-
+        #
+        # else:
+        #     print("Nope Nope Nope...")
+        #
+        #     await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
+        #
+        #     if synclist_boolean_returned == True:
+        #
+        #         member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
+        #         for accounts in guilds.members:
+        #             if after == guilds.members.display_name:
+        #                 member_id = guilds.members
+        #                 await member_id.add_roles(member_role, roeasn='Member join', atomic=True)
+        #
         return
 
 
@@ -466,112 +540,3 @@ class Member_Handler(discord.Client):
 
 
 
-    async def member_list_Sync(self):
-        """
-        This function Syncs the google sheets
-        and discord member lists
-        """
-
-        # Pulls new google sheets_member_object for comparison
-
-        try:
-            creds = retrieve_credentials()
-            service = build('sheets', 'v4', credentials=creds)
-
-            # Call the Sheets API
-            sheet = service.spreadsheets()
-            result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                        range=RANGE).execute()
-            values2 = result.get('values', [])
-
-            if not values2:
-                print('No data found.')
-            else:
-
-                sheets_member_Object = []
-
-                for row in values2[1:]:
-                    sheets_member_Object.append({values2[0][0]: row[0:][0],
-                                                 values2[0][1]: row[1:][0],
-                                                 values2[0][2]: row[2:][0],
-                                                 values2[0][3]: row[3:][0]})
-
-        except HttpError as err:
-            print(err.content)
-
-        # Pulls and creates new discord member object
-        guild = self.get_guild(guild_ID)
-        memberList = guild.members
-        discObject = []
-
-        # Creates a varible that verifies if
-        # the user has the member role or not
-        for member in memberList[1:]:
-            if MEMBER_ROLE_ID in list(map(lambda role: role.id, member.roles)):
-                pow = 1
-            else:
-                pow = 0
-            discObject.append((member.display_name, pow))
-
-        # Clears out the google-sheets chart before writing
-        # gc = gspread.service_account()
-        #
-        # sh = gc.open("Copy of MemberDues Sheet")
-        #
-        # worksheet = sh.get_worksheet(1)
-        #
-        # worksheet.clear()
-
-        # Loops through the google-sheets chart while searching
-        # and verifying wherther on not the user is a member and has
-        # payed dues.
-
-        for lines in discObject:
-
-            name = lines[0].split(" ", 1)
-            print(lines[1])
-            global internal_member_Object
-            try:
-                # Checks first name, last name, and member role status
-                if ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
-                        (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
-                        and lines[1] == 1):
-                    user_Mark = next(item for item in internal_member_Object if item['First'] == name[0])
-                    user_Mark['Rolled in Discord'] = 'TRUE'
-                    user_Mark1 = next(item for item in sheets_member_Object if item['First'] == name[0])
-                    user_Mark1['Rolled in Discord'] = 'TRUE'
-
-                    gc = gspread.service_account()
-
-                    sh = gc.open("Copy of MemberDues Sheet")
-
-                    worksheet = sh.get_worksheet(1)
-
-                    df = pd.DataFrame(sheets_member_Object)
-
-                    set_with_dataframe(worksheet, df)
-
-                elif ((list(filter(lambda person: (person['First'] == name[0]), sheets_member_Object))) and
-                    (list(filter(lambda person: (person['Last'] == name[1]), sheets_member_Object)))
-                    and lines[1] == 0):
-                    user_Mark2 = next(item for item in internal_member_Object if item['First'] == name[0])
-                    user_Mark2['Rolled in Discord'] = 'FALSE'
-                    user_Mark3 = next(item for item in sheets_member_Object if item['First'] == name[0])
-                    user_Mark3['Rolled in Discord'] = 'FALSE'
-
-                    gc = gspread.service_account()
-
-                    sh = gc.open("Copy of MemberDues Sheet")
-
-                    worksheet = sh.get_worksheet(1)
-
-                    df = pd.DataFrame(sheets_member_Object)
-
-                    set_with_dataframe(worksheet, df)
-
-            # else:
-            except HttpError as e:
-                print(e)
-                print('Well....poop...?')
-
-        return
