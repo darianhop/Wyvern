@@ -413,6 +413,19 @@ class Member_Handler(discord.Client):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
+        print(member)
+
+        # if ((list(filter(lambda person: (person['First'] == name[0]), internal_member_Object))) and
+        #         (list(filter(lambda person: (person['Last'] == name[1]), internal_member_Object)))
+        #         and lines[1] == 1):
+        #
+        #
+        # elif ((list(filter(lambda person: (person['First'] == name[0]), internal_member_Object))) and
+        #         (list(filter(lambda person: (person['Last'] == name[1]), internal_member_Object)))
+        #         and lines[1] == 1):
+
+
+
         return
 
 
@@ -501,13 +514,13 @@ class Member_Handler(discord.Client):
             discObject.append((member.display_name, pow))
 
         # Clears out the google-sheets chart before writing
-        gc = gspread.service_account()
-
-        sh = gc.open("Copy of MemberDues Sheet")
-
-        worksheet = sh.get_worksheet(1)
-
-        worksheet.clear()
+        # gc = gspread.service_account()
+        #
+        # sh = gc.open("Copy of MemberDues Sheet")
+        #
+        # worksheet = sh.get_worksheet(1)
+        #
+        # worksheet.clear()
 
         # Loops through the google-sheets chart while searching
         # and verifying wherther on not the user is a member and has
