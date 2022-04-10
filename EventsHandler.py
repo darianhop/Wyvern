@@ -1,11 +1,9 @@
-from time import strptime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta
-from Oauth import Google_CALENDAR_ID, retrieve_credentials, discord_token
-from MemberHandler import Member_Handler, REMINDER_CHANNEL_ID
+from Oauth import Google_CALENDAR_ID, retrieve_credentials
+from MemberHandler import REMINDER_CHANNEL_ID
 from discord.ext import tasks
-from discord import Guild
 import discord
 import asyncio
 

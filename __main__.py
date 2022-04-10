@@ -1,12 +1,12 @@
 from EventsHandler import GoogleCalendar
 from Oauth import discord_token, retrieve_credentials
-from MemberHandler import Member_Handler,\
-     JOIN_CHANNEL_ID, BOT_COMMAND_CHANNEL_ID, guild_ID,\
-     OFFICER_ROLE_ID, PROJECT_LEAD_ROLE_ID, MEMBER_ROLE_ID, RECRUIT_ROLE_ID
+from MemberHandler import Member_Handler,guild_ID
 import discord
-import asyncio
-# from erplbot.club_members import get_members_from_spreadsheet, Name
-# from erplbot.commands import bot_command
+
+
+
+
+
 
 class ERPLBot(discord.Client):
     """
@@ -19,7 +19,12 @@ class ERPLBot(discord.Client):
         """
         await Member_Handler.member_list_Sync(self)
         #Change status
-        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members'))
+        await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members')) 
+        """
+        move this (^) to an outside function (in memberhandler), call it there, 
+        and update that function whenever someone's role is updated so the discord bot always shows the number of recruits in its activity 
+        """
+        
         print("Bot initialized")
         from EventsHandler import GoogleCalendar
         guilds = self.get_guild(id=guild_ID)
@@ -41,10 +46,6 @@ class ERPLBot(discord.Client):
     async def on_message(self, message):
        await Member_Handler.message(self, message)
     
-
-    
-
-
 
 def main():
     """
