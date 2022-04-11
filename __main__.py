@@ -1,12 +1,8 @@
-import SheetsHandler
 from EventsHandler import GoogleCalendar
 from Oauth import discord_token, retrieve_credentials
 from MemberHandler import Member_Handler,guild_ID, MEMBER_ROLE_ID
 from SheetsHandler import Sheets_Handler
 import discord
-
-from SheetsHandler import Sheets_Handler
-
 
 class ERPLBot(discord.Client):
     """
