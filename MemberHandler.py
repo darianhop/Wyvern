@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
-from SheetsHandler import Sheets_Handler, internal_member_Object
+from SheetsHandler import Sheets_Handler
 global values1
 
 
@@ -35,8 +35,9 @@ guild_ID = 946831225081958410
 # PROJECT_CATEGORY_ID = 962178983078797391
 # guild_ID = 962178982575505499                     #ERPL Discord Guild
 
-class Member_Handler(discord.Client):
 
+class Member_Handler(discord.Client):
+    
     async def member_join(self, member):
         """
         This function runs whenever a new member joins the server
@@ -52,7 +53,10 @@ class Member_Handler(discord.Client):
         await member.create_dm()
         async with member.typing():
             # Check as soon as they've joined
-            await Member_Handler.update_member(Member_Handler,member)
+            try:
+                await Member_Handler.update_member(Member_Handler,member)
+            except:
+                pass
             # Add a welcome message/embed here
             embed = discord.Embed(
                 title="*We hope you rocket to success with us!* :rocket: <:ERPL:809226558988484608>",
@@ -64,7 +68,7 @@ class Member_Handler(discord.Client):
             # Message member on join with welcome message
             DM_embed=discord.Embed(title="Please read our rules on #rules-info & we hope you rocket to success with us. 🚀", 
                                 colour=discord.Colour(0x255c6),
-                                description="If you've paid dues, Please set your nick to the name you filled out in payment of dues. *@Wyvern should do the rest. (if it doesn't work, complain in #join-boost-system )*"
+                                description="If you've paid dues, Please set your nick to the name you filled out in payment of dues. *@ERPL Bot should do the rest. (if it doesn't work, complain in #join-boost-system )*"
                                 )
             DM_embed.set_author(name=f"Hello {member.name}, welcome to ERPL!")
             DM_embed.add_field(name="/Projects", value="Lists the current projects.", inline=False)
@@ -89,7 +93,7 @@ class Member_Handler(discord.Client):
         """
         # Ignore our own updates
         if member == self.user:
-            return
+            pass
         
         print(f"{member.name} left")
         await member.guild.get_channel(JOIN_CHANNEL_ID).send(f"Sorry to see you go {member.name}!")
@@ -452,7 +456,7 @@ class Member_Handler(discord.Client):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
-        global internal_member_Object
+        from SheetsHandler import internal_member_Object, row
         # If exists,
         # and the currently filled boolean is opposite disired_state,
         # set the boolean to what was passed,
@@ -465,8 +469,8 @@ class Member_Handler(discord.Client):
         name = after.split(" ",1)
         # print(name[0])
         # print(name[1])
-        print('Before')
-        print(internal_member_Object)
+        # print('Before')
+        # print(internal_member_Object)
         try:
             if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled in Discord'] != str(desired_state).upper(), internal_member_Object)))):
 
@@ -474,16 +478,16 @@ class Member_Handler(discord.Client):
                     role_Mark['Rolled in Discord'] = 'TRUE'
 
                     update_member_role = True
-                    print('After')
-                    print(internal_member_Object)
-                    print(update_member_role)
+                    # print('After')
+                    # print(internal_member_Object)
+                    # print(update_member_role)
 
             else:
-                    print("Nope Nope Nope...")
+                    print("There is a user with this name already, not granting member role for security reasons. \ne.g. So all discord users cant have one name to get access to avoid paying dues.")
                     update_member_role = False
-                    print('After')
-                    print(internal_member_Object)
-                    print(update_member_role)
+                    # print('After')
+                    # print(internal_member_Object)
+                    # print(update_member_role)
 
         except HttpError as e:
             print(e)

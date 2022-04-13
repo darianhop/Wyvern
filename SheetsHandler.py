@@ -1,4 +1,5 @@
 import os
+from sys import intern
 import discord
 import gspread
 import pygsheets
@@ -17,39 +18,40 @@ from googleapiclient.errors import HttpError
 # def create_internal_member_object():
 
 
-try:
-    global values1
-    creds = retrieve_credentials()
-    service = build('sheets', 'v4', credentials=creds)
-
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                range=RANGE).execute()
-    values1 = result.get('values', [])
-
-    if not values1:
-        print('No data found.')
-    else:
-
-        global internal_member_Object
-
-        internal_member_Object = []
-
-        # print('Date, First name, Last name, bool:')
-        for row in values1[1:]:
-            # Print columns A and E, which correspond to indices 0 and 4.
-            # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-            internal_member_Object.append({values1[0][0]: row[0:][0],
-                                         values1[0][1]: row[1:][0],
-                                         values1[0][2]: row[2:][0],
-                                         values1[0][3]: row[3:][0]})
-
-
-except HttpError as err:
-    print(err.content)
-
 class Sheets_Handler():
+
+
+    def __init__():
+        try:
+            global values1
+            creds = retrieve_credentials()
+            service = build('sheets', 'v4', credentials=creds)
+
+            # Call the Sheets API
+            sheet = service.spreadsheets()
+            result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
+                                        range=RANGE).execute()
+            values1 = result.get('values', [])
+
+            if not values1:
+                print('No data found.')
+            else:
+
+                global internal_member_Object
+
+                internal_member_Object = []
+
+                # print('Date, First name, Last name, bool:')
+                for row in values1[1:]:
+                    # Print columns A and E, which correspond to indices 0 and 4.
+                    # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
+                    internal_member_Object.append({values1[0][0]: row[0:][0],
+                                                values1[0][1]: row[1:][0],
+                                                values1[0][2]: row[2:][0],
+                                                values1[0][3]: row[3:][0]})
+            return internal_member_Object, row
+        except HttpError as err:
+            print(err.content)
 
 
     async def member_list_Sync(self, guild_ID, MEMBER_ROLE_ID):
@@ -69,18 +71,20 @@ class Sheets_Handler():
             result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
                                         range=RANGE).execute()
             values2 = result.get('values', [])
-
+            # print(values2)
             if not values2:
                 print('No data found.')
             else:
 
                 sheets_member_Object = []
-
                 for row in values2[1:]:
-                    sheets_member_Object.append({values2[0][0]: row[0:][0],
-                                                 values2[0][1]: row[1:][0],
-                                                 values2[0][2]: row[2:][0],
-                                                 values2[0][3]: row[3:][0]})
+                    sheets_member_Object = ({values2[0]: row[0:]})
+                                                # values2[0][1]: row[1:][0],
+                                                # values2[0][2]: row[2:][0],
+                                                # values2[0][3]: row[3:][0]})
+                                                
+                
+
 
 
         except HttpError as err:
@@ -131,7 +135,7 @@ class Sheets_Handler():
                     worksheet = sh.get_worksheet(1)
 
                     df = pd.DataFrame(sheets_member_Object)
-
+                    # print(df)
                     set_with_dataframe(worksheet, df)
 
                 elif ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower(), sheets_member_Object))) and lines[1] == 0):
@@ -148,7 +152,7 @@ class Sheets_Handler():
                     worksheet = sh.get_worksheet(1)
 
                     df = pd.DataFrame(sheets_member_Object)
-
+                    # print(df)
                     set_with_dataframe(worksheet, df)
 
             # else:
