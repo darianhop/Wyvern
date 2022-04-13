@@ -479,14 +479,14 @@ class Member_Handler(discord.Client):
 
                     update_member_role = True
                     # print('After')
-                    # print(internal_member_Object)
+                    # print('\n\n\n\n',internal_member_Object)
                     # print(update_member_role)
 
             else:
                     print("There is a user with this name already, not granting member role for security reasons. \ne.g. So all discord users cant have one name to get access to avoid paying dues.")
                     update_member_role = False
                     # print('After')
-                    # print(internal_member_Object)
+                    # print('\n\n\n\n',internal_member_Object)
                     # print(update_member_role)
 
         except HttpError as e:

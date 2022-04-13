@@ -1,5 +1,4 @@
 import os
-from sys import intern
 import discord
 import gspread
 import pygsheets
@@ -15,13 +14,11 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 # global internal_member_Object
 
-# def create_internal_member_object():
-
 
 class Sheets_Handler():
 
-
     def __init__():
+
         try:
             global values1
             creds = retrieve_credentials()
@@ -32,12 +29,10 @@ class Sheets_Handler():
             result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
                                         range=RANGE).execute()
             values1 = result.get('values', [])
-
             if not values1:
                 print('No data found.')
             else:
 
-                global internal_member_Object
 
                 internal_member_Object = []
 
@@ -49,12 +44,15 @@ class Sheets_Handler():
                                                 values1[0][1]: row[1:][0],
                                                 values1[0][2]: row[2:][0],
                                                 values1[0][3]: row[3:][0]})
-            return internal_member_Object, row
+                return internal_member_Object
+
+
         except HttpError as err:
             print(err.content)
 
 
-    async def member_list_Sync(self, guild_ID, MEMBER_ROLE_ID):
+
+    async def member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object):
         """
         This function Syncs the google sheets
         and discord member lists
@@ -71,24 +69,22 @@ class Sheets_Handler():
             result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
                                         range=RANGE).execute()
             values2 = result.get('values', [])
-            # print(values2)
             if not values2:
                 print('No data found.')
             else:
 
                 sheets_member_Object = []
+
                 for row in values2[1:]:
-                    sheets_member_Object = ({values2[0]: row[0:]})
-                                                # values2[0][1]: row[1:][0],
-                                                # values2[0][2]: row[2:][0],
-                                                # values2[0][3]: row[3:][0]})
-                                                
-                
+                    sheets_member_Object.append({values2[0][0]: row[0:][0],
+                                                 values2[0][1]: row[1:][0],
+                                                 values2[0][2]: row[2:][0],
+                                                 values2[0][3]: row[3:][0]})
+                    # print(sheets_member_Object,'\n')
 
 
-
-        except HttpError as err:
-            print(err.content)
+        except HttpError as e:
+            print(f'Error occured while making sheets_memeber_Object:\n{e}')
 
         # Pulls and creates new discord member object
         guild = self.get_guild(guild_ID)
@@ -116,7 +112,7 @@ class Sheets_Handler():
             # print(lines[1])
             # print(name[0])
             # print(name[1])
-            global internal_member_Object
+            internal_member_Object
 
             try:
                 person = str
@@ -124,40 +120,37 @@ class Sheets_Handler():
                 if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower(), sheets_member_Object))) and lines[1] == 1):
 
                     user_Mark = next(item for item in internal_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
-                    user_Mark['Rolled in Discord'] = 'TRUE'
+                    user_Mark['Rolled In Discord'] = 'TRUE'
                     user_Mark1 = next(item for item in sheets_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
-                    user_Mark1['Rolled in Discord'] = 'TRUE'
+                    user_Mark1['Rolled In Discord'] = 'TRUE'
 
                     gc = gspread.service_account()
 
                     sh = gc.open("Copy of MemberDues Sheet")
 
                     worksheet = sh.get_worksheet(1)
-
                     df = pd.DataFrame(sheets_member_Object)
-                    # print(df)
                     set_with_dataframe(worksheet, df)
 
                 elif ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower(), sheets_member_Object))) and lines[1] == 0):
-
+                    
                     user_Mark2 = next(item for item in internal_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
-                    user_Mark2['Rolled in Discord'] = 'FALSE'
+                    user_Mark2['Rolled In Discord'] = 'FALSE'
                     user_Mark3 = next(item for item in sheets_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
-                    user_Mark3['Rolled in Discord'] = 'FALSE'
+                    user_Mark3['Rolled In Discord'] = 'FALSE'
+
 
                     gc = gspread.service_account()
 
                     sh = gc.open("Copy of MemberDues Sheet")
 
                     worksheet = sh.get_worksheet(1)
-
                     df = pd.DataFrame(sheets_member_Object)
-                    # print(df)
                     set_with_dataframe(worksheet, df)
 
             # else:
             except HttpError as e:
                 print(e)
-                print('Well....poop...?')
+                print(f'Encountered an error while updating the sheets list: \n{e}')
 
         return

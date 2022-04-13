@@ -7,6 +7,7 @@ from discord.ext import tasks
 import discord
 import asyncio
 REMINDER_CHANNEL_ID = 947286490973634640
+# REMINDER_CHANNEL_ID = 962178983078797390 # ERPL Temp
 class GoogleCalendar(discord.Client):
     """
     Represents a small custom interface to the Google Calendar API

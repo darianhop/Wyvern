@@ -14,7 +14,8 @@ class ERPLBot(discord.Client):
         """
         This function runs when the bot is connected to Discord
         """
-        await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
+        internal_member_Object = Sheets_Handler.__init__()
+        await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object)
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members')) 
         """

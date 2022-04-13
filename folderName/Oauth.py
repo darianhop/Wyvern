@@ -29,7 +29,7 @@ client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar']
 
 # The ID and range of a sample spreadsheet.
-Google_SPREADSHEET_ID = '1iPSq6P2s1dfGNGnM99Ok5QQfVtOPH3dyxMBSBKmmfqw'
+Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
 RANGE = 'MasterDiscordList!A1:D'
 
 # The ID of a sample calendar
