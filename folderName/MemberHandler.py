@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
-from SheetsHandler import Sheets_Handler
+from folderName.SheetsHandler import Sheets_Handler
 global values1
 
 
@@ -456,7 +456,7 @@ class Member_Handler(discord.Client):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
-        from SheetsHandler import internal_member_Object, row
+        from folderName.SheetsHandler import internal_member_Object, row
         # If exists,
         # and the currently filled boolean is opposite disired_state,
         # set the boolean to what was passed,

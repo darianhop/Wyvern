@@ -1,8 +1,8 @@
 import discord
-from EventsHandler import GoogleCalendar
-from Oauth import discord_token, retrieve_credentials
-from MemberHandler import Member_Handler, guild_ID, MEMBER_ROLE_ID
-from SheetsHandler import Sheets_Handler
+from folderName.EventsHandler import GoogleCalendar
+from folderName.Oauth import discord_token, retrieve_credentials
+from folderName.MemberHandler import Member_Handler, guild_ID, MEMBER_ROLE_ID
+from folderName.SheetsHandler import Sheets_Handler
 
 
 class ERPLBot(discord.Client):
@@ -23,7 +23,7 @@ class ERPLBot(discord.Client):
         """
         
         print("Bot initialized")
-        from EventsHandler import GoogleCalendar
+        from folderName.EventsHandler import GoogleCalendar
         guilds = self.get_guild(id=guild_ID)
         GoogleCalendar.init(guilds) # Comment in to turn on passive events listener
         # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)

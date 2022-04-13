@@ -29,7 +29,7 @@ client_secret_discord = 'GJ9Thq9lvkmYtmWaoJF3SMpVlBL8hjMJ'
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/calendar']
 
 # The ID and range of a sample spreadsheet.
-Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
+Google_SPREADSHEET_ID = '1iPSq6P2s1dfGNGnM99Ok5QQfVtOPH3dyxMBSBKmmfqw'
 RANGE = 'MasterDiscordList!A1:D'
 
 # The ID of a sample calendar
@@ -57,8 +57,8 @@ def retrieve_credentials():
     # time.
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        expiry = creds.expiry
-        now = datetime.utcnow()
+        # expiry = creds.expiry
+        # now = datetime.utcnow()
     
         # d = datetime.now(tz=timezone.utc)
         # print(expiry, 'expiry time')
