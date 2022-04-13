@@ -120,7 +120,8 @@ class Member_Handler(discord.Client):
 
                 member_role = guilds.get_role(role_id=MEMBER_ROLE_ID)
                 await after.add_roles(member_role, reason='Member join', atomic=True)
-                await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID)
+                internal_member_Object = Sheets_Handler.__init__()
+                await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object)
 
             return
 
@@ -456,7 +457,7 @@ class Member_Handler(discord.Client):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
-        from folderName.SheetsHandler import internal_member_Object, row
+        internal_member_Object = Sheets_Handler.__init__()
         # If exists,
         # and the currently filled boolean is opposite disired_state,
         # set the boolean to what was passed,
@@ -472,10 +473,10 @@ class Member_Handler(discord.Client):
         # print('Before')
         # print(internal_member_Object)
         try:
-            if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled in Discord'] != str(desired_state).upper(), internal_member_Object)))):
+            if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled In Discord'] != str(desired_state).upper(), internal_member_Object)))):
 
-                    role_Mark = next(item for item in internal_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower() and item['Rolled in Discord'] != str(desired_state).upper())
-                    role_Mark['Rolled in Discord'] = 'TRUE'
+                    role_Mark = next(item for item in internal_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower() and item['Rolled In Discord'] != str(desired_state).upper())
+                    role_Mark['Rolled In Discord'] = 'TRUE'
 
                     update_member_role = True
                     # print('After')

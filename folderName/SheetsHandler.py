@@ -108,7 +108,7 @@ class Sheets_Handler():
 
         for lines in discObject:
 
-            name = lines[0].split(" ", 1)
+            name = [lines[0].split(" ")[0],lines[0].split(" ")[-1]]
             # print(lines[1])
             # print(name[0])
             # print(name[1])
@@ -143,6 +143,7 @@ class Sheets_Handler():
                     gc = gspread.service_account()
 
                     sh = gc.open("Copy of MemberDues Sheet")
+                    print('Change this for ERPL')
 
                     worksheet = sh.get_worksheet(1)
                     df = pd.DataFrame(sheets_member_Object)
