@@ -9,7 +9,7 @@ from pandas import DataFrame
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 
 
-from folderName.Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE, SCOPES
+from .Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE, SCOPES
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 # global internal_member_Object

@@ -1,7 +1,7 @@
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta
-from folderName.Oauth import Google_CALENDAR_ID, retrieve_credentials
+from .Oauth import Google_CALENDAR_ID, retrieve_credentials
 # from folderName.MemberHandler import REMINDER_CHANNEL_ID
 from discord.ext import tasks
 import discord
@@ -163,8 +163,8 @@ class GoogleCalendar(discord.Client):
                 print(error)
         
             # Waits 5 minutes and creates a taskS
-            print('Events Call at timestamp')
-            print(datetime.utcnow())
+            # print('Events Call at timestamp')
+            # print(datetime.utcnow())
             await asyncio.sleep(300)
             asyncio.create_task(EventsListener(guilds))
             # asyncio.create_task(createdEventsListener())

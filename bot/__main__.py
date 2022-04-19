@@ -1,3 +1,5 @@
+from http.client import HTTPException
+from urllib.error import HTTPError
 import discord
 from .EventsHandler import GoogleCalendar
 from .Oauth import discord_token, retrieve_credentials
@@ -23,7 +25,7 @@ class ERPLBot(discord.Client):
         """
         
         print("Bot initialized")
-        from folderName.EventsHandler import GoogleCalendar
+        from .EventsHandler import GoogleCalendar
         guilds = self.get_guild(id=guild_ID)
         GoogleCalendar.init(guilds) # Comment in to turn on passive events listener
         # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)
@@ -62,5 +64,5 @@ def main():
 
 try:
     main()
-except:
-    print('Could not start main')
+except HTTPError as e:
+    print(f'Could not start main:\n{e}')

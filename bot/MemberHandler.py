@@ -71,9 +71,11 @@ class Member_Handler(discord.Client):
                                 description="If you've paid dues, Please set your nick to the name you filled out in payment of dues. *@ERPL Bot should do the rest. (if it doesn't work, complain in #join-boost-system )*"
                                 )
             DM_embed.set_author(name=f"Hello {member.name}, welcome to ERPL!")
+            DM_embed.add_field(name="DM Commads", value="The following commands are to be used in DM to join and leave projects.", inline=False)
             DM_embed.add_field(name="/Projects", value="Lists the current projects.", inline=False)
             DM_embed.add_field(name="/join {Project Name}", value="Grants you the role for that project so you can stay informed!", inline=False)
             DM_embed.add_field(name="/leave {Project Name}", value="Revokes that project's role from you, they'll be sad to see you go.", inline=True)
+            DM_embed.add_field(name="/Help", value="Sends this message again in case you've misplaced it.")
             await member.send(embed=DM_embed)
 
         """    
@@ -143,6 +145,24 @@ class Member_Handler(discord.Client):
             DM Commands (All Members)
             """
             try:
+                # /Help Command
+                if '/Help' or '/help' in message.content:
+                    message.author.dm_channel
+                    async with message.author.typing():
+                        await asyncio.sleep(1)
+                        DM_embed=discord.Embed(title="Please read our rules on #rules-info & we hope you rocket to success with us. 🚀", 
+                                colour=discord.Colour(0x255c6),
+                                description="If you've paid dues, Please set your nick to the name you filled out in payment of dues. *@ERPL Bot should do the rest. (if it doesn't work, complain in #join-boost-system )*"
+                                            )
+                        DM_embed.set_author(name=f"Hello {message.author}, welcome to ERPL!")
+                        DM_embed.add_field(name="DM Commads", value="The following commands are to be used in DM to join and leave projects.", inline=False)
+                        DM_embed.add_field(name="/Projects", value="Lists the current projects.", inline=False)
+                        DM_embed.add_field(name="/join {Project Name}", value="Grants you the role for that project so you can stay informed!", inline=False)
+                        DM_embed.add_field(name="/leave {Project Name}", value="Revokes that project's role from you, they'll be sad to see you go.", inline=True)
+                        DM_embed.add_field(name="/Help", value="Sends this message again in case you've misplaced it.")
+                        await message.author.send(embed=DM_embed)
+
+
                 # /Projects Command
                 if '/Projects' in message.content:
                     message.author.dm_channel
