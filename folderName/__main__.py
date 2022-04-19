@@ -1,3 +1,5 @@
+from http.client import HTTPException
+from urllib.error import HTTPError
 import discord
 from folderName.EventsHandler import GoogleCalendar
 from folderName.Oauth import discord_token, retrieve_credentials
@@ -69,5 +71,5 @@ def main():
 
 try:
     main()
-except:
-    print('Could not start main')
+except HTTPError as e:
+    print(f'Could not start main:\n{e}')

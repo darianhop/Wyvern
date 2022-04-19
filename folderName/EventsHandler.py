@@ -162,9 +162,9 @@ class GoogleCalendar(discord.Client):
                 # The API encountered a problem.
                 print(error)
         
-            # Waits 5 minutes and creates a taskS
-            print('Events Call at timestamp')
-            print(datetime.utcnow())
+            # Waits 5 minutes and creates a task
+            # print('Events Call at timestamp')
+            # print(datetime.utcnow())
             await asyncio.sleep(300)
             asyncio.create_task(EventsListener(guilds))
             # asyncio.create_task(createdEventsListener())
