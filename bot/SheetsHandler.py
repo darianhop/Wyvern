@@ -1,23 +1,16 @@
-import os
-import discord
 import gspread
-import pygsheets
 import pandas as pd
-# from __future__ import print_function
-from google.oauth2.credentials import Credentials
-from pandas import DataFrame
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
-
-
 from .Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE, SCOPES
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-# global internal_member_Object
 
 SHEETSNAME = "Copy of MemberDues Sheet"
 
 def pull_sheets():
-    # Pulls new google sheets_member_object for comparison
+    """
+    Pulls new google sheets_member_object for comparison
+    """
     try:
         # Try to grab Creds from Oauth
         creds = retrieve_credentials()

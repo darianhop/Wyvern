@@ -1,4 +1,3 @@
-from http.client import HTTPException
 from urllib.error import HTTPError
 import discord
 from .EventsHandler import GoogleCalendar

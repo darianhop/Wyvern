@@ -1,11 +1,9 @@
-import os
 from http.client import HTTPException
 from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
 from .SheetsHandler import Sheets_Handler, query_names
-global values1
 
 
 BOT_ID = 941072154718531594
@@ -316,6 +314,15 @@ class Member_Handler(discord.Client):
                     # Query the names in sheets
                     query_names(message.content)
                     # Make an embed listing all matches
+            except Exception as e:
+                print(f"An exception occured while creating querying names:\n{e}")
+                pass 
+            """
+            Dectalk
+            """
+            try:
+                if '/Dectalk' in message.content:
+                    dectalk(self,message)
             except Exception as e:
                 print(f"An exception occured while creating querying names:\n{e}")
                 pass 
