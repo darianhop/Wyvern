@@ -1,8 +1,8 @@
 import discord
-from folderName.EventsHandler import GoogleCalendar
-from folderName.Oauth import discord_token, retrieve_credentials
-from folderName.MemberHandler import Member_Handler, guild_ID, MEMBER_ROLE_ID
-from folderName.SheetsHandler import Sheets_Handler
+from .EventsHandler import GoogleCalendar
+from .Oauth import discord_token, retrieve_credentials
+from .MemberHandler import Member_Handler, guild_ID, MEMBER_ROLE_ID
+from .SheetsHandler import Sheets_Handler
 
 
 class ERPLBot(discord.Client):

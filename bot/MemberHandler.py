@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
-from folderName.SheetsHandler import Sheets_Handler, query_names
+from .SheetsHandler import Sheets_Handler, query_names
 global values1
 
 
