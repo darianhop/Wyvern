@@ -14,85 +14,66 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 # global internal_member_Object
 
+SHEETSNAME = "Copy of MemberDues Sheet"
+
+def pull_sheets():
+    # Pulls new google sheets_member_object for comparison
+    try:
+        # Try to grab Creds from Oauth
+        creds = retrieve_credentials()
+        service = build('sheets', 'v4', credentials=creds)
+
+        # Call the Sheets API
+        sheet = service.spreadsheets()
+        result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
+                                    range=RANGE).execute()
+        vals = result.get('values', [])
+        if not vals:
+            print('No data found.')
+        else:
+
+            sheets_member_Object = []
+
+            for row in vals[1:]:
+                sheets_member_Object.append({vals[0][0]: row[0:][0],
+                                                vals[0][1]: row[1:][0],
+                                                vals[0][2]: row[2:][0],
+                                                vals[0][3]: row[3:][0]})
+                # print(sheets_member_Object,'\n')
+        return sheets_member_Object
+    except HttpError as e:
+        print(f'Error occured while making sheets_memeber_Object:\n{e}')
+
+async def query_names(query):
+    """
+    Takes a regEx query & returns all matching entries
+    """
+    return
 
 class Sheets_Handler():
 
     def __init__():
-
+        """
+        Called whenever sheets handler is started.
+        """
         try:
-            global values1
-            creds = retrieve_credentials()
-            service = build('sheets', 'v4', credentials=creds)
-
-            # Call the Sheets API
-            sheet = service.spreadsheets()
-            result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                        range=RANGE).execute()
-            values1 = result.get('values', [])
-            if not values1:
-                print('No data found.')
-            else:
-
-
-                internal_member_Object = []
-
-                # print('Date, First name, Last name, bool:')
-                for row in values1[1:]:
-                    # Print columns A and E, which correspond to indices 0 and 4.
-                    # print('%s,%s,%s,%s' % (row[0],row[1],row[2], row[3]))
-                    internal_member_Object.append({values1[0][0]: row[0:][0],
-                                                values1[0][1]: row[1:][0],
-                                                values1[0][2]: row[2:][0],
-                                                values1[0][3]: row[3:][0]})
-                return internal_member_Object
-
-
+            internal_member_Object=pull_sheets()
+            return internal_member_Object # return the newly made object
+        # Just error on failure
         except HttpError as err:
             print(err.content)
 
-
-
     async def member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object):
         """
-        This function Syncs the google sheets
-        and discord member lists
+        This function Syncs the google sheets and discord member lists
         """
-
-        # Pulls new google sheets_member_object for comparison
-
-        try:
-            creds = retrieve_credentials()
-            service = build('sheets', 'v4', credentials=creds)
-
-            # Call the Sheets API
-            sheet = service.spreadsheets()
-            result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                        range=RANGE).execute()
-            values2 = result.get('values', [])
-            if not values2:
-                print('No data found.')
-            else:
-
-                sheets_member_Object = []
-
-                for row in values2[1:]:
-                    sheets_member_Object.append({values2[0][0]: row[0:][0],
-                                                 values2[0][1]: row[1:][0],
-                                                 values2[0][2]: row[2:][0],
-                                                 values2[0][3]: row[3:][0]})
-                    # print(sheets_member_Object,'\n')
-
-
-        except HttpError as e:
-            print(f'Error occured while making sheets_memeber_Object:\n{e}')
-
+        sheets_member_Object = pull_sheets()
         # Pulls and creates new discord member object
         guild = self.get_guild(guild_ID)
         memberList = guild.members
         discObject = []
 
-        # Creates a varible that verifies if
-        # the user has the member role or not
+        # Creates a varible that verifies if the user has the member role or not
         for member in memberList:
 
             if MEMBER_ROLE_ID in list(map(lambda role: role.id, member.roles)):
@@ -102,9 +83,7 @@ class Sheets_Handler():
             discObject.append((member.display_name, pow))
 
 
-        # Loops through the google-sheets chart while searching
-        # and verifying wherther on not the user is a member and has
-        # payed dues.
+        # Loops through the google-sheets chart while searching and verifying wherther on not the user is a member and has payed dues.
 
         for lines in discObject:
 
@@ -126,7 +105,7 @@ class Sheets_Handler():
 
                     gc = gspread.service_account()
 
-                    sh = gc.open("Copy of MemberDues Sheet")
+                    sh = gc.open(SHEETSNAME)
 
                     worksheet = sh.get_worksheet(1)
                     df = pd.DataFrame(sheets_member_Object)
@@ -142,8 +121,7 @@ class Sheets_Handler():
 
                     gc = gspread.service_account()
 
-                    sh = gc.open("Copy of MemberDues Sheet")
-                    print('Change this for ERPL')
+                    sh = gc.open(SHEETSNAME)
 
                     worksheet = sh.get_worksheet(1)
                     df = pd.DataFrame(sheets_member_Object)

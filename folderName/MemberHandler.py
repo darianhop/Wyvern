@@ -4,7 +4,7 @@ from urllib.error import HTTPError
 import discord
 from googleapiclient.errors import HttpError
 import asyncio
-from folderName.SheetsHandler import Sheets_Handler
+from folderName.SheetsHandler import Sheets_Handler, query_names
 global values1
 
 
@@ -89,7 +89,7 @@ class Member_Handler(discord.Client):
 
     async def member_leave(self, member):
         """
-        This function runs whenever a new member leaves the server
+        This function runs whenever a member leaves the server
         """
         # Ignore our own updates
         if member == self.user:
@@ -98,10 +98,9 @@ class Member_Handler(discord.Client):
         print(f"{member.name} left")
         await member.guild.get_channel(JOIN_CHANNEL_ID).send(f"Sorry to see you go {member.name}!")
 
-
     async def member_update(self, before, after):
         """
-        This function runs whenever a new member updates their own profile, like changing their nickname
+        This function runs whenever a member updates their own profile, like changing their nickname
         """
         guilds = self.get_guild(id=guild_ID)
 
@@ -124,9 +123,6 @@ class Member_Handler(discord.Client):
                 await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object)
 
             return
-
-
-
 
     async def message(self, message):
         """
@@ -289,11 +285,20 @@ class Member_Handler(discord.Client):
                 if '/DeleteProject' in message.content:
                     await Member_Handler.delete_project(self, message, guilds)
             # Exception if one occurs
-            except HttpError as e:
-                await asyncio.sleep(1)
+            except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
-                pass
-    
+                pass 
+            """
+            Name Query Sheets
+            """
+            try:
+                if '/QueryNames' in message.content:
+                    # Query the names in sheets
+                    query_names(message.content)
+                    # Make an embed listing all matches
+            except Exception as e:
+                print(f"An exception occured while creating querying names:\n{e}")
+                pass 
     
     async def create_project(self, message, guilds):
         """
@@ -346,7 +351,6 @@ class Member_Handler(discord.Client):
                 print(f'Name Taken: {projectName}')
             except:
                 pass
-
 
     async def archive_project(self, message, guilds):
         """
@@ -452,7 +456,6 @@ class Member_Handler(discord.Client):
     #                 await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
         return
 
-
     async def update_member(self, after, desired_state):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
@@ -494,7 +497,6 @@ class Member_Handler(discord.Client):
             print(e)
 
         return update_member_role
-
 
     async def existing_projects(self, message):
         try:
