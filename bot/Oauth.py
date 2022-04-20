@@ -55,17 +55,10 @@ def retrieve_credentials():
     # time.
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        # expiry = creds.expiry
-        # now = datetime.utcnow()
-    
-        # d = datetime.now(tz=timezone.utc)
-        # print(expiry, 'expiry time')
-        # print(now, 'current time')
-        # print(d.tzinfo)
     
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:# and now < expiry:
+        if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(client_id_google, SCOPES)

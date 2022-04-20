@@ -2,7 +2,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import datetime, timedelta
 from .Oauth import Google_CALENDAR_ID, retrieve_credentials
-# from folderName.MemberHandler import REMINDER_CHANNEL_ID
+# from .MemberHandler import REMINDER_CHANNEL_ID
 from discord.ext import tasks
 import discord
 import asyncio

@@ -4,7 +4,7 @@ import discord
 from googleapiclient.errors import HttpError
 import asyncio
 from .SheetsHandler import Sheets_Handler, query_names
-
+from .audiotest import dectalk
 
 BOT_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
@@ -322,7 +322,7 @@ class Member_Handler(discord.Client):
             """
             try:
                 if '/Dectalk' in message.content:
-                    dectalk(self,message)
+                    await dectalk(self,message)
             except Exception as e:
                 print(f"An exception occured while creating querying names:\n{e}")
                 pass 
