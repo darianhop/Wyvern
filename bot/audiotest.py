@@ -11,13 +11,14 @@ async def dectalk(client,message):
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
         subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
         vc = await message.author.guild.get_channel(VCID).connect()
-        player = discord.FFmpegPCMAudio("bot\\audio\\"+count+'.wav', after=lambda: print('done playing ',count,'.wav'))
+        player = discord.FFmpegPCMAudio("bot\\audio\\"+count+'.wav')
         try:
             player.play()
             while not player.is_done():
                 await asyncio.sleep(3)
             # disconnect after the player has finished
             player.stop()
+            print('done playing ',count,'.wav')
             await vc.disconnect()
         except Exception as e:
             print(f"An exception occured while playing DECTalk:\n{e}")
