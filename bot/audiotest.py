@@ -12,10 +12,13 @@ async def dectalk(client,message):
         subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
         try:
             vc = await message.author.guild.get_channel(VCID).connect()
+            await asyncio.sleep(5)
             vc.play(discord.FFmpegPCMAudio(count+'.wav',executable="ffmpeg.exe"))
+            await asyncio.sleep(3)
             while not vc.is_playing():
-                await asyncio.sleep(3)
+                await asyncio.sleep(1)
             # disconnect after the player has finished
+            await asyncio.sleep(1)
             vc.stop()
             print('done playing ',count,'.wav')
             await vc.disconnect()
