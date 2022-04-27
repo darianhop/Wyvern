@@ -1,7 +1,7 @@
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-import os.path
+import os
 import json
 
 authorize_uri_google = "https://accounts.google.com/o/oauth2/auth"
@@ -49,6 +49,7 @@ def retrieve_credentials():
     """
     Retrieves the Google OAuth Credentials and refreshes tokens if they are expired
     """
+    os.chdir(os.path.dirname(os.path.realpath(__file__)))
     creds = None
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
