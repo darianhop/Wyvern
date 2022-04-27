@@ -34,6 +34,7 @@ RANGE = 'MasterDiscordList!A1:D'
 Google_CALENDAR_ID = '19aahr89ga4qhhrj15vskbcfhk@group.calendar.google.com'
 
 
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 # Discord token
 if os.path.exists('DiscordToken.json'):
     with open('DiscordToken.json') as f:
