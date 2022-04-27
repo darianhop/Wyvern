@@ -17,7 +17,6 @@ async def dectalk(client,message):
             vc.play(discord.FFmpegPCMAudio(count+'.wav',executable="ffmpeg.exe"))
             await asyncio.sleep(3)
             while vc.is_playing():
-                i+=1
                 await asyncio.sleep(1)
             # disconnect after the player has finished
             await asyncio.sleep(1)
