@@ -10,9 +10,9 @@ async def dectalk(client,message):
     try:
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
         if len(message.content.split('/Dectalk ',maxsplit=1))>1:
-            subprocess.Popen("say.exe -w "+count+".wav "+message.content.split('/Dectalk ',maxsplit=1)[-1]+"&")
+            subprocess.Popen("say.exe -w "+count+".wav "+message.content.split('/Dectalk ',maxsplit=1)[-1])
         else:
-            subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
+            subprocess.Popen("say.exe -w "+count+".wav "+msg)
         await asyncio.sleep(3)
         try:
             vc = await message.author.guild.get_channel(VCID).connect()
