@@ -13,7 +13,7 @@ async def dectalk(client,message):
         try:
             vc = await message.author.guild.get_channel(VCID).connect()
             vc.play(discord.FFmpegPCMAudio(count+'.wav',executable="ffmpeg.exe"))
-            while not vc.is_done():
+            while not vc.is_playing():
                 await asyncio.sleep(3)
             # disconnect after the player has finished
             vc.stop()
