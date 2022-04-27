@@ -5,7 +5,4 @@ gspread==5.3.2
 gspread_dataframe==3.3.0
 pandas==1.4.2
 protobuf==3.20.0
-<<<<<<< HEAD
 PyNaCl==1.5.0
-=======
->>>>>>> parent of 3f3a0be (Audio fixes2)
