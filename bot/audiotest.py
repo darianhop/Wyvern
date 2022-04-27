@@ -10,26 +10,25 @@ async def dectalk(client,message):
     try:
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
         subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
-        await asyncio.sleep(5)
+        await asyncio.sleep(3)
         try:
             vc = await message.author.guild.get_channel(VCID).connect()
-            await asyncio.sleep(5)
+            await asyncio.sleep(3)
             vc.play(discord.FFmpegPCMAudio(count+'.wav',executable="ffmpeg.exe"))
             await asyncio.sleep(3)
-            print(vc.is_playing())
-            i=0
-            while not vc.is_playing():
+            while vc.is_playing():
                 i+=1
                 await asyncio.sleep(1)
             # disconnect after the player has finished
             await asyncio.sleep(1)
             vc.stop()
-            print('done playing ',count,'.wav\t',i)
+            print('done playing ',count,'.wav')
             await vc.disconnect()
         except Exception as e:
             print(f"An exception occured while playing DECTalk:\n{e}")
             await vc.disconnect()
         print ("Deleting original wav...")
+        await asyncio.sleep(5)
         os.remove(count+".wav")
         vc.cleanup()
     except Exception as e:
