@@ -11,7 +11,7 @@ async def dectalk(client,message):
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
         subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
         vc = await message.author.guild.get_channel(VCID).connect()
-        player = discord.FFmpegPCMAudio("bot\\audio\\"+count+'.wav')
+        player = discord.FFmpegPCMAudio(count+'.wav',executable="ffmpeg.exe")
         try:
             player.play()
             while not player.is_done():
@@ -22,8 +22,14 @@ async def dectalk(client,message):
             await vc.disconnect()
         except Exception as e:
             print(f"An exception occured while playing DECTalk:\n{e}")
+            await vc.disconnect()
         print ("Deleting original wav...")
         os.remove(".\\bot\\audio"+count+".wav")
         vc.cleanup()
     except Exception as e:
         print(f"An exception occured while creating/deleting DECTalk:\n{e}")
+    try:
+        await vc.disconnect()
+        vc.cleanup()
+    except Exception as e:
+        print('Failed to cleanup')
