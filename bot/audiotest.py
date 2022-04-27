@@ -9,7 +9,7 @@ subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
 async def dectalk(client,message):
     try:
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
-        if message.content.split('/Dectalk ',maxsplit=1).len()>1:
+        if len(message.content.split('/Dectalk ',maxsplit=1))>1:
             subprocess.Popen("say.exe -w "+count+".wav "+message.content.split('/Dectalk ',maxsplit=1)[-1]+"&")
         else:
             subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
