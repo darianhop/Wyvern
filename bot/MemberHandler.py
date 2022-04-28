@@ -144,7 +144,7 @@ class Member_Handler(discord.Client):
             """
             try:
                 # /Help Command
-                if '/Help' or '/help' in message.content:
+                if '/Help' in message.content:
                     message.author.dm_channel
                     async with message.author.typing():
                         await asyncio.sleep(1)
