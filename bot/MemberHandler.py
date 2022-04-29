@@ -301,7 +301,7 @@ class Member_Handler(discord.Client):
                 
                 # /ArchiveProject {projectName} Command
                 if '/archiveproject' in message.content:
-                    await Member_Handler.delete_project(self, message, guilds)
+                    await Member_Handler.archive_project(self, message, guilds)
             # Exception if one occurs
             except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
@@ -434,53 +434,6 @@ class Member_Handler(discord.Client):
             async with message.author.typing():
                 await message.author.send("***Error deleting the project...***\nPlease use the format: `/archiveproject projectName` \n Where ProjectName is the name of the project")
 
-    async def on_delete_project(self, message):
-        """
-        Delete Project Command (Officers Only)
-        """
-        # Check to make sure the person sending the message has officer role
-        if OFFICER_ROLE_ID in list(map(lambda role: role.id, message.author.roles)):
-            # Attempt to split and save the project name
-            try:
-                if len(message.content.split(' '))<2:
-                    await message.author.send("Project name is empty")
-                projectName = message.content.split(' ')[1].lower()
-                # Get category, names, and channels
-                for category in message.guild.categories:
-                    if category.name == "Projects":
-                        # Check to make sure the channel/project already exists
-                        if projectName in [channel.name for channel in category.channels]:
-                            for channel in category.channels:
-                                if channel.name == projectName:
-                                    # Locate the Project Lead and remove them
-
-                                    # Hide Old Project Channel
-                                    await channel.set_permissions(message.guild.get_role(MEMBER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
-                                    await channel.set_permissions(message.guild.get_role(RECRUIT_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
-                                    await channel.set_permissions(message.guild.get_role(PROJECT_LEAD_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
-                                    await channel.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False, reason=f'Project Deleted by {message.author}')
-                                    # Loop through categories to locate sub-chats
-                                    for category in message.guild.categories:
-                                        if category.name == projectName+" sub-chats":
-                                            await category.set_permissions(message.guild.get_role(PROJECT_LEAD_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
-                                            await category.set_permissions(message.guild.get_role(OFFICER_ROLE_ID), view_channel=False, read_messages=False, send_messages=False,reason='Project Deleted')
-                                    # Delete Role (not tested, as i couldnt get the /deleteproject to work)
-                                    for projectRole in message.guild.roles:
-                                        if projectRole.name == projectName:
-                                            await projectRole.delete(reason=f'Project Deleted by {message.author}')
-                                    # Send a message back to confirm deletion
-                                    await message.channel.send(f"Project {projectName} deleted!")
-                        else:
-                            await message.author.create_dm()
-                            async with message.author.typing():
-                                await message.author.send(f"The project, {projectName}, doesn't exist!")
-
-            except Exception as e:
-                print(f"User entry failed: {message.content} \n {e}")
-                await message.author.create_dm()
-                async with message.author.typing():
-                    await message.author.send("***Error deleting the project...***\nPlease use the format: `/archiveproject projectName` \n Where ProjectName is the name of the project")
-        return
 
     async def update_member(self, after, desired_state):
         """
