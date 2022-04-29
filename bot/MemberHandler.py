@@ -440,20 +440,20 @@ class Member_Handler(discord.Client):
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
         """
         internal_member_Object = Sheets_Handler.__init__()
-        # If exists,
-        # and the currently filled boolean is opposite disired_state,
-        # set the boolean to what was passed,
-        # call and return true.
-        # Else false.
+
         global guilds
         guilds = self.get_guild(id=guild_ID)
-        #
-        # print(after)
+ 
         name = after.split(" ",1)
-        # print(name[0])
-        # print(name[1])
-        # print('Before')
-        # print(internal_member_Object)
+
+        # In this this section, the bot checks to see if the user (who updated their profile)
+        # is in it's internal memory. If they are in the internal_member_Object, the bot will update
+        # the user's status to TRUE. It will also make this function reture a True boolean value
+        #
+        # Also, if there is another user with the exact same name,
+        # as the current user being checked, it will trigger the "else" statement and and print
+        # the designated output. In addition, the else statement will make this function return
+        # a False boolean value.
         try:
             if ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower() and person['Rolled In Discord'] != str(desired_state).upper(), internal_member_Object)))):
 
@@ -461,16 +461,12 @@ class Member_Handler(discord.Client):
                     role_Mark['Rolled In Discord'] = 'TRUE'
 
                     update_member_role = True
-                    # print('After')
-                    # print('\n\n\n\n',internal_member_Object)
-                    # print(update_member_role)
+
 
             else:
                     print("There is a user with this name already, not granting member role for security reasons. \ne.g. So all discord users cant have one name to get access to avoid paying dues.")
                     update_member_role = False
-                    # print('After')
-                    # print('\n\n\n\n',internal_member_Object)
-                    # print(update_member_role)
+
 
         except HttpError as e:
             print(e)
