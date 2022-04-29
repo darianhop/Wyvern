@@ -4,7 +4,7 @@ import discord
 from googleapiclient.errors import HttpError
 import asyncio
 from .SheetsHandler import Sheets_Handler, query_names
-from .audiotest import dectalk
+from .Dectalk import dectalk
 
 BOT_ID = 941072154718531594
 RECRUIT_ROLE_ID = 946832526075367474
@@ -381,7 +381,6 @@ class Member_Handler(discord.Client):
 
     async def archive_project(self, message, guilds):
         """
-        Not Working
         Archive Project Command (Officers Only) /ArchiveProject
         """
         # Attempt to split and save the project name
@@ -433,7 +432,7 @@ class Member_Handler(discord.Client):
             print(f"User entry failed: {message.content} \n {e}")
             await message.author.create_dm()
             async with message.author.typing():
-                await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
+                await message.author.send("***Error deleting the project...***\nPlease use the format: `/archiveproject projectName` \n Where ProjectName is the name of the project")
 
     async def on_delete_project(self, message):
         """
@@ -480,7 +479,7 @@ class Member_Handler(discord.Client):
                 print(f"User entry failed: {message.content} \n {e}")
                 await message.author.create_dm()
                 async with message.author.typing():
-                    await message.author.send("***Error deleting the project...***\nPlease use the format: `/DeleteProject projectName` \n Where ProjectName is the name of the project")
+                    await message.author.send("***Error deleting the project...***\nPlease use the format: `/archiveproject projectName` \n Where ProjectName is the name of the project")
         return
 
     async def update_member(self, after, desired_state):
