@@ -1,6 +1,6 @@
 from urllib.error import HTTPError
 import discord
-from .EventsHandler import GoogleCalendar
+# from .EventsHandler import GoogleCalendar
 from .Oauth import discord_token, retrieve_credentials
 from .MemberHandler import Member_Handler, guild_ID, MEMBER_ROLE_ID
 from .SheetsHandler import Sheets_Handler

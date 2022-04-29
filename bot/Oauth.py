@@ -30,8 +30,6 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis
 Google_SPREADSHEET_ID = '1lucr-jZf4t_KCo3chY4QSQ64yuoxcXh_sBClQqCQZ2U'
 RANGE = 'MasterDiscordList!A1:D'
 
-# The ID of a sample calendar
-Google_CALENDAR_ID = '19aahr89ga4qhhrj15vskbcfhk@group.calendar.google.com'
 
 
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
