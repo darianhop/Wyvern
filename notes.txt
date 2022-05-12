@@ -1,0 +1,83 @@
+Very top level: no one has any permissions
+
+Category:
+    Carries the LCD permissions (permissions that every SINGLE person has)
+        (minimum permissions you want to give for that entire category)
+
+On project channel creation, assign a project lead, and add that lead to the channel in permissions
+    Verify project channel does not exist as an active project
+        if it does, return existance error
+    Verify project channel does not exist in archive
+        If it does, ask user if they want to reinstate the project
+    Verify existance of user to be project lead
+        store in variable
+    Create new channel, not clone, in project category
+        Sync that new channel permissions with the category
+        Add the new project lead to the permissions of that channel
+    Create project role (blank permissions)
+        and add to the channel permissions
+    Create sub chat category for the project 
+        Add above misc category
+        name it PROJECT-sub-chats
+        Add project lead and role to that sub categories permissions
+            The Specific Project lead: Manage messages (can edit category permissions, and create/delete channels)
+            Specific Role: Full interaction permissions (tts and stuff)
+    Grant the project lead the Project Lead role and the project Specific role
+    Notify the project lead of their new abilities
+
+Project Lead Function (officer only)
+    Goes through the project list, and returns the project name, and the lead associated with it, check to see if that lead has the project role, returns info in testing
+
+On project archive, remove the project lead, 
+    Identify the proejct lead
+        (if we can do heirachy, grab the top person and Verify they have project lead role)
+            Store that person in a variable
+    Get the project specific role
+        store in variable
+    Get the channel
+        Move to archive
+            sync with category (no one can see except pr)
+    Delete project specific role
+        (this should make it so only specified people can see the channels)
+    Grant that proejct lead the VIP role 
+    Remove the project lead's PROJECT LEAD role
+    Notify the the Project Lead in DM
+    
+Change Lead Function (officer only) /ChangeLead PROJECT NEW_LEAD
+    Calls project lead Function
+    Verify if project exists
+    Verify if new lead exists
+    Identifies the current lead
+    Grants new lead all things old lead has (see create project for detials)
+    Grants old lead VIP
+    Removes PROJECT LEAD role from old lead
+    Notify the new Project Lead with discription of their abilities
+    Notify the old project lead that they have been removed
+
+
+
+Transfer of power Function (dm)
+    Send an alert to testing containing who did what
+    Verify user meets succ requirements in server
+        send alert to person being replaced cointaining who issued the command
+        wait 15 minutes (fo real)
+        Do the Transfer
+
+
+    (notes)
+    see succ
+
+
+
+
+
+
+
+
+President Role
+    no permissions, superficial role
+    
+
+PR permissions Category
+    Not Admin
+    Moderation and maintainence where the bot fails

@@ -12,7 +12,7 @@ INTERNAL_CALENDAR_ID = 'mdt0cqfvv99lgtlo567jhv7tfk@group.calendar.google.com'
 LAB_CALENDAR_ID = '19aahr89ga4qhhrj15vskbcfhk@group.calendar.google.com'
 
 REMINDER_CHANNEL_ID = 947286490973634640
-# REMINDER_CHANNEL_ID = 962178983078797390 # ERPL Temp
+# REMINDER_CHANNEL_ID = 962178983078797390 # ERPL
 class GoogleCalendar(discord.Client):
     """
     Represents a small custom interface to the Google Calendar API
