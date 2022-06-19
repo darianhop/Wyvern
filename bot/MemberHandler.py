@@ -321,10 +321,10 @@ class Member_Handler(discord.Client):
             Dectalk
             """
             try:
-                if '/dectalk' in message.content:
+                if '/Dectalk' in message.content:
                     await dectalk(self,message)
             except Exception as e:
-                print(f"An exception occured while creating querying names:\n{e}")
+                print(f"An exception occured while dectalking:\n{e}")
                 pass 
     
     async def create_project(self, message, guilds):

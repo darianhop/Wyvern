@@ -15,20 +15,19 @@ class ERPLBot(discord.Client):
         """
         This function runs when the bot is connected to Discord
         """
-        internal_member_Object = Sheets_Handler.__init__()
-        await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object)
+        internal_member_Object = Sheets_Handler.__init__() #Grab the member list
         #Change status
         await self.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='4 New Members')) 
         """
         move this (^) to an outside function (in memberhandler), call it there, and update that function whenever someone's role is updated so the discord bot always shows the number of recruits in its activity 
         """
         
-        print("Bot initialized")
         from .EventsHandler import GoogleCalendar
         guilds = self.get_guild(id=guild_ID)
         GoogleCalendar.init(guilds) # Comment in to turn on passive events listener
         # GoogleCalendar.initEvents() # Not yet working (Do not comment in, will crash)
-
+        print("Bot initialized") #success?
+        await Sheets_Handler.member_list_Sync(self, guild_ID, MEMBER_ROLE_ID, internal_member_Object) #Do this last because otherwise we ratelimit
 
     async def on_member_join(self, member):
         await Member_Handler.member_join(self, member)

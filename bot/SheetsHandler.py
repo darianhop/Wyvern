@@ -18,6 +18,7 @@ def pull_sheets():
 
         # Call the Sheets API
         sheet = service.spreadsheets()
+        # This whole section needs redone with gspread:
         result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
                                     range=RANGE).execute()
         vals = result.get('values', [])

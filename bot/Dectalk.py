@@ -7,9 +7,9 @@ msg=r"[:nh]I'm gonna eat a pizza. [:dial386-317-4777] Hi, can i order a pizza? [
 os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
 subprocess.Popen("say.exe -w "+count+".wav "+msg+"&")
 async def dectalk(client,message):
-    try:
+    try:            
         os.chdir(os.path.dirname(os.path.realpath(__file__))+'\\audio')
-        if len(message.content.split('/Dectalk ',maxsplit=1))>1:
+        if len(message.content.split('/Dectalk ',maxsplit=1))>=1:
             subprocess.Popen("say.exe -w "+count+".wav "+message.content.split('/Dectalk ',maxsplit=1)[-1])
         else:
             subprocess.Popen("say.exe -w "+count+".wav "+msg)
@@ -24,14 +24,17 @@ async def dectalk(client,message):
             # disconnect after the player has finished
             await asyncio.sleep(1)
             vc.stop()
-            print('done playing ',count,'.wav')
+            print(f"done playing {count}.wav")
             await vc.disconnect()
         except Exception as e:
             print(f"An exception occured while playing DECTalk:\n{e}")
             await vc.disconnect()
-        print ("Deleting original wav...")
-        await asyncio.sleep(5)
-        os.remove(count+".wav")
+        try:
+            print ("Deleting original wav...")
+            await asyncio.sleep(5)
+            os.remove(f"{count}.wav")
+        except OSError as e:
+            print(f"An exception occured while deleting {count}.wav:\n{e}")
         vc.cleanup()
     except Exception as e:
         print(f"An exception occured while creating/deleting DECTalk:\n{e}")
