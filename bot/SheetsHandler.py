@@ -1,11 +1,9 @@
-import gspread
+import gspread, asyncio
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
 from .Oauth import  retrieve_credentials, Google_SPREADSHEET_ID, RANGE, SCOPES
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
-SHEETSNAME = "Copy of MemberDues Sheet"
 
 def pull_sheets():
     """
@@ -16,12 +14,16 @@ def pull_sheets():
         creds = retrieve_credentials()
         service = build('sheets', 'v4', credentials=creds)
 
-        # Call the Sheets API
-        sheet = service.spreadsheets()
+        gc = gspread.service_account() #Gspread it
+        sh = gc.open_by_key(Google_SPREADSHEET_ID)
+        vals = pd.DataFrame(sh.values_get(RANGE))['values']
+        print(vals)
+
+        ## Call the Sheets API 
+        #sheet = service.spreadsheets()
         # This whole section needs redone with gspread:
-        result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,
-                                    range=RANGE).execute()
-        vals = result.get('values', [])
+        #result = sheet.values().get(spreadsheetId=Google_SPREADSHEET_ID,range=RANGE).execute()
+        #vals = result.get('values', [])
         if not vals:
             print('No data found.')
         else:
@@ -75,12 +77,16 @@ class Sheets_Handler():
             else:
                 pow = 0
             discObject.append((member.display_name, pow))
-
-
         # Loops through the google-sheets chart while searching and verifying wherther on not the user is a member and has payed dues.
 
+        #Get this once
+        try:
+            gc = gspread.service_account()
+            sh = gc.open_by_key(Google_SPREADSHEET_ID)
+            worksheet = sh.get_worksheet(1)
+        except HttpError as e:
+            print(f'Encountered an error while connecting to gspread: \n{e}')
         for lines in discObject:
-
             name = [lines[0].split(" ")[0],lines[0].split(" ")[-1]]
             # print(lines[1])
             # print(name[0])
@@ -97,13 +103,8 @@ class Sheets_Handler():
                     user_Mark1 = next(item for item in sheets_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
                     user_Mark1['Rolled In Discord'] = 'TRUE'
 
-                    gc = gspread.service_account()
-
-                    sh = gc.open(SHEETSNAME)
-
-                    worksheet = sh.get_worksheet(1)
-                    df = pd.DataFrame(sheets_member_Object)
-                    set_with_dataframe(worksheet, df)
+                    df = pd.DataFrame(sheets_member_Object) 
+                    set_with_dataframe(worksheet, df) # need to change this be done once or something 
 
                 elif ((list(filter(lambda person: person['First'].lower() == name[0].lower() and person['Last'].lower() == name[1].lower(), sheets_member_Object))) and lines[1] == 0):
                     
@@ -112,18 +113,11 @@ class Sheets_Handler():
                     user_Mark3 = next(item for item in sheets_member_Object if item['First'].lower() == name[0].lower() and item['Last'].lower() == name[1].lower())
                     user_Mark3['Rolled In Discord'] = 'FALSE'
 
-
-                    gc = gspread.service_account()
-
-                    sh = gc.open(SHEETSNAME)
-
-                    worksheet = sh.get_worksheet(1)
                     df = pd.DataFrame(sheets_member_Object)
                     set_with_dataframe(worksheet, df)
 
-            # else:
             except HttpError as e:
-                print(e)
                 print(f'Encountered an error while updating the sheets list: \n{e}')
+            await asyncio.sleep(0.01)
 
         return

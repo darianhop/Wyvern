@@ -93,7 +93,7 @@ class Member_Handler(discord.Client):
         """
         # Ignore our own updates
         if member == self.user:
-            pass
+            return
         
         print(f"{member.name} left")
         await member.guild.get_channel(JOIN_CHANNEL_ID).send(f"Sorry to see you go {member.name}!")
@@ -305,7 +305,6 @@ class Member_Handler(discord.Client):
             # Exception if one occurs
             except Exception as e:
                 print(f"An exception occured while creating a new project:\n{e}")
-                pass 
             """
             Name Query Sheets
             """
@@ -316,16 +315,14 @@ class Member_Handler(discord.Client):
                     # Make an embed listing all matches
             except Exception as e:
                 print(f"An exception occured while creating querying names:\n{e}")
-                pass 
             """
             Dectalk
             """
             try:
                 if '/Dectalk' in message.content:
-                    await dectalk(self,message)
+                    await dectalk(self,message,guilds)
             except Exception as e:
                 print(f"An exception occured while dectalking:\n{e}")
-                pass 
     
     async def create_project(self, message, guilds):
         """
@@ -434,7 +431,6 @@ class Member_Handler(discord.Client):
             async with message.author.typing():
                 await message.author.send("***Error deleting the project...***\nPlease use the format: `/archiveproject projectName` \n Where ProjectName is the name of the project")
 
-
     async def update_member(self, after, desired_state):
         """
         This function updates the member(called when someone joins[implemented], when some updates their nickname[not implemented])
@@ -487,7 +483,6 @@ class Member_Handler(discord.Client):
             return project_list, project_id_list
         except HttpError as e:
             print(e)
-            pass
 
     async def existing_roles(self):
         try:
@@ -506,7 +501,6 @@ class Member_Handler(discord.Client):
             return roles_list, roles_name_list, role_ids
         except HTTPError as e:
             print(e)
-            pass
 
 
 

@@ -53,7 +53,7 @@ class GoogleCalendar(discord.Client):
                 # Retrieving Upcoming Events, if there are any
                 try:
                     if not upcoming_Events:
-                        pass
+                        return
 
                     # Gather data on all of the events returned from the calendar search
                     for upcoming in upcoming_Events:
@@ -115,7 +115,7 @@ class GoogleCalendar(discord.Client):
 
                     try:
                         if not created_Events:
-                            return
+                            return # Break and donot continue if none exist
 
                         for created in created_Events:
                             created_start = created['start'].get('dateTime', created['start'].get('date'))
